@@ -12,6 +12,7 @@ extern "C" {
 }
 
 #include "lydia/dfa/mona_dfa.hpp"
+#include "lydia/logic/to_ldlf.hpp"
 
 namespace Syft {
 
