@@ -30,25 +30,25 @@ namespace Syft
         ExplicitStateDfaMona environment_spec_dfa =
             ExplicitStateDfaMona::dfa_of_formula(environment_specification); // DFA A_{E}
         ExplicitStateDfaMona tautology_dfa =
-            ExplicitStateDfaMona::dfa_of_formula("tt"); // DFA A_{tt}. Accepts non-empty traces only
+            ExplicitStateDfaMona::dfa_of_formula("true"); // DFA A_{tt}. Accepts non-empty traces only
 
         // DFA A_{phi}
-        // std::cout << std::endl;
-        // std::cout << "Agent goal DFA\n";
-        // agent_spec_dfa.dfa_print();
-        // std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << "Agent goal DFA\n";
+        agent_spec_dfa.dfa_print();
+        std::cout << std::endl;
 
         // DFA A_{E}
-        // std::cout << std::endl;
-        // std::cout << "Environment Specification DFA\n";
-        // environment_spec_dfa.dfa_print();
-        // std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << "Environment Specification DFA\n";
+        environment_spec_dfa.dfa_print();
+        std::cout << std::endl;
 
         // tautoloty DFA
-        // std::cout << std::endl;
-        // std::cout << "Tautology DFA\n";
-        // tautology_dfa.dfa_print();
-        // std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << "Tautology DFA\n";
+        tautology_dfa.dfa_print();
+        std::cout << std::endl;
 
         double t_ltlf2dfa = ltlf2dfa.stop().count() / 1000.0;
         running_times_.push_back(t_ltlf2dfa);

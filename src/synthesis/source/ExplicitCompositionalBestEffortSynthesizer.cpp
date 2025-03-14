@@ -34,7 +34,7 @@ namespace Syft {
         ExplicitStateDfaMona environment_spec_dfa =
             ExplicitStateDfaMona::dfa_of_formula(environment_specification); // DFA A_{E}
         ExplicitStateDfaMona no_empty_dfa = 
-            ExplicitStateDfaMona::dfa_of_formula("tt"); // DFA A_{tt}, i.e. accepts all non-empty traces
+            ExplicitStateDfaMona::dfa_of_formula("true"); // DFA A_{tt}, i.e. accepts all non-empty traces
 
         // constructs DFA A_{E -> Phi}
         // a. Build DFA for implication (E -> phi) as !(E && (!phi))
