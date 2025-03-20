@@ -10,6 +10,7 @@ namespace Syft {
     struct SynthesisResult{
         bool realizability;
         CUDD::BDD winning_states;
+        CUDD::BDD winning_moves; ////ELISA CHANGED
         std::unique_ptr<Transducer> transducer;
     };
 
