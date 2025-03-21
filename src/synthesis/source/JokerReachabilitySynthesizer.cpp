@@ -17,7 +17,7 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
   SynthesisResult result;
   CUDD::BDD winning_states = state_space_ & goal_states_;
   CUDD::BDD winning_moves = goal_moves_; //ELISA CHANGED
-
+  int k = 1;
   while (true) {
     CUDD::BDD new_winning_moves_star = winning_moves |                                           
                                   (state_space_ & (!winning_states) & preimage_star(winning_states));    //t_star
@@ -28,6 +28,7 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
                                   (state_space_ & (!new_winning_states_star) & preimage(new_winning_states_star));    //t_hat
 
     CUDD::BDD new_winning_states = project_into_states(new_winning_moves);        //w_hat
+    
 
     if (includes_initial_state(new_winning_states)) {
         result.realizability = true;
@@ -38,6 +39,7 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
         result.transducer = std::make_unique<Transducer>(
               var_mgr_, initial_vector_, strategy, spec_.transition_function(),
               starting_player_, protagonist_player_);
+        result.cost = k;
         return result;
 
     } else if (new_winning_states == winning_states) {
@@ -56,6 +58,7 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
 
     winning_moves = new_winning_moves;
     winning_states = new_winning_states;
+    k++;
   }
 
 }

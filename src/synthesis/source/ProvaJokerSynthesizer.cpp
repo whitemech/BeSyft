@@ -67,15 +67,16 @@ namespace Syft
         formula parsed_formula = 
              parse_formula(agent_specification.c_str());
 
-        //std::cout << parsed_formula << std::endl;
         // Extract propositions from formula and partition
+
         var_mgr_->create_named_variables(get_props(parsed_formula)); // (E -> phi) includes all problem variables
         var_mgr_->partition_variables(partition_.input_variables,
                                         partition_.output_variables);
-
         // Get explicit state DFA from MONA DFA
         ExplicitStateDfa explicit_agent_dfa =
             ExplicitStateDfa::from_dfa_mona(var_mgr_, agent_spec_dfa);
+
+        
         // ExplicitStateDfa explicit_env_dfa =
         //     ExplicitStateDfa::from_dfa_mona(var_mgr_, environment_spec_dfa); 
         // ExplicitStateDfa explicit_tau_dfa =
@@ -156,21 +157,29 @@ namespace Syft
                                                     arena_[0].final_states(), //winning region GOAL
                                                     var_mgr_->cudd_mgr()->bddOne());
         SynthesisResult result = reachability_synthesizer.run();
-        CUDD::BDD winning_region = result.winning_states;
-        CUDD::BDD winning_moves = result.winning_moves; //ELISA CHANGED
-        //std::cout << winning_moves<< std::endl;
-        JokerReachabilitySynthesizer joker_synthesizer(arena_[0],
-                                                        starting_player_,
-                                                        Player::Agent,
-                                                        winning_region, // Lifting
-                                                        winning_moves,
-                                                        var_mgr_->cudd_mgr()->bddOne()); //var_mgr_->cudd_mgr()->bddOne()); //TODO:
-        joker_result = joker_synthesizer.run();
-        double t_jokerGame = JokerGame.stop().count() / 1000.0;
-        running_times_.push_back(t_jokerGame);
-        std::cout << "DONE in " << t_jokerGame << " s" << std::endl; 
-
+        if(result.realizability){
+            std::cout << "The game is realizable without Joker moves" << std::endl;
+            double t_jokerGame = JokerGame.stop().count() / 1000.0;
+            running_times_.push_back(t_jokerGame);
+            std::cout << "DONE in " << t_jokerGame << " s" << std::endl;
+            return result;
+        } else {
+            std::cout << "The game is NOT realizable without Joker moves" << std::endl;
         
+            CUDD::BDD winning_region = result.winning_states;
+            CUDD::BDD winning_moves = result.winning_moves; //ELISA CHANGED
+            //std::cout << winning_region << std::endl;
+            JokerReachabilitySynthesizer joker_synthesizer(arena_[0],
+                                                            starting_player_,
+                                                            Player::Agent,
+                                                            winning_region, // Lifting
+                                                            winning_moves,
+                                                            var_mgr_->cudd_mgr()->bddOne()); //var_mgr_->cudd_mgr()->bddOne()); //TODO:
+            joker_result = joker_synthesizer.run();
+            double t_jokerGame = JokerGame.stop().count() / 1000.0;
+            running_times_.push_back(t_jokerGame);
+            std::cout << "DONE in " << t_jokerGame << " s" << std::endl;
+        }
 
         return joker_result;
     }

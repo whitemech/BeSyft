@@ -12,6 +12,7 @@ namespace Syft {
         CUDD::BDD winning_states;
         CUDD::BDD winning_moves; ////ELISA CHANGED
         std::unique_ptr<Transducer> transducer;
+        int cost;
     };
 
 /**

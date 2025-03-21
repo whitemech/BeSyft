@@ -211,6 +211,99 @@ formula push_not_in(formula &f)
 }
 
 // get negation normal form of a formula
+// formula get_nnf(formula &f)
+// {
+//   formula res;
+//   if (f.kind() == op::ap || f.kind() == op::tt || f.kind() == op::ff)
+//   {
+//     res = f;
+//   }
+//   else
+//   {
+//     formula l = f[0], r, lft, rgt, res2;
+//     formula lt, rt;
+//     std::vector<formula> lst;
+//     switch (f.kind())
+//     {
+//     case op::Not:
+//       res = push_not_in(l);
+//       break;
+//     // Next
+//     // X p = !(X !p)
+//     case op::X:
+//       r = get_nnf(l);
+//       res = formula::unop(op::X, r);
+//       break;
+//     case op::G:
+//       r = get_nnf(l);
+//       res = formula::unop(op::G, r);
+//       break;
+//     case op::F:
+//       r = get_nnf(l);
+//       res = formula::unop(op::F, r);
+//       break;
+//     case op::U:
+//       r = f[1];
+//       lft = get_nnf(l);
+//       rgt = get_nnf(r);
+//       res = formula::U(lft, rgt);
+//       break;
+//     // weak Until
+//     // φ W ψ ≡ (φ U ψ) ∨ G φ ≡ φ U (ψ ∨ G φ) ≡ ψ R (ψ ∨ φ)
+//     // p W q = G p | (p U q) = (! F !p ) | (p U q)
+//     case op::W:
+//       r = f[1];
+//       l = get_nnf(l);
+//       r = get_nnf(r);
+//       // res2 = ! p;
+//       res2 = formula::multop(op::Or, {l, r});
+//       res = formula::R(r, res2);
+//       break;
+//     case op::R:
+//       r = f[1];
+//       lft = get_nnf(l);
+//       rgt = get_nnf(r);
+//       res = formula::R(lft, rgt);
+//       break;
+//     case op::And:
+//       for (formula child : f)
+//       {
+//         l = get_nnf(child);
+//         lst.push_back(l);
+//       }
+//       res = formula::multop(op::And, lst);
+//       break;
+//     case op::Or:
+//       for (formula child : f)
+//       {
+//         l = get_nnf(child);
+//         lst.push_back(l);
+//       }
+//       res = formula::multop(op::Or, lst);
+//       break;
+//     case op::Implies:
+//       r = f[1];
+//       lft = formula::Not(l);
+//       rgt = formula::multop(op::Or, {lft, r});
+//       res = get_nnf(rgt);
+//       break;
+//     case op::Equiv:
+//       // a <-> b = (a->b) & (b->a)
+//       r = f[1];
+//       lt = formula::binop(op::Implies, l, r);
+//       lft = get_nnf(lt);
+//       rt = formula::binop(op::Implies, r, l);
+//       rgt = get_nnf(rt);
+//       res = formula::multop(op::And, {lft, rgt});
+//       break;
+//     default:
+//       cerr << "Formula: " << f << ". ";
+//       throw runtime_error("Error formula in get_nnf()");
+//       exit(-1);
+//     }
+//   }
+//   return res;
+// }
 formula get_nnf(formula &f)
 {
   formula res;
@@ -228,11 +321,13 @@ formula get_nnf(formula &f)
     case op::Not:
       res = push_not_in(l);
       break;
-    // Next
-    // X p = !(X !p)
     case op::X:
       r = get_nnf(l);
       res = formula::unop(op::X, r);
+      break;
+    case op::strong_X:
+      r = get_nnf(l);
+      res = formula::unop(op::strong_X, r);
       break;
     case op::G:
       r = get_nnf(l);

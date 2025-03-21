@@ -1,5 +1,10 @@
+#ifndef SPOT_WANT_STRONG_X
+#define SPOT_WANT_STRONG_X 1
+#define SPOT_HAS_STRONG_X 1
+#endif
 #ifndef SPOTPARSER_H
 #define SPOTPARSER_H
+
 
 #include <spot/tl/formula.hh>
 

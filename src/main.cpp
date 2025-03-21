@@ -196,6 +196,7 @@ int main(int argc, char** argv) {
         std::cout << "[BeSyft] Running time: " << sumVec(run_times) << " s" << std::endl;
         if (result.realizability) {
             std::cout << "[BeSyft] Joker realizable. Computed winning strategy" << std::endl;
+            std::cout << "Joker moves counter: " << result.cost << std::endl;
             if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.transducer.get() -> dump_dot("adv_outfunct.dot");}
             if (outfile != "") {
                     std::ofstream outstream(outfile, std::ifstream::app);
