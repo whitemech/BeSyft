@@ -189,6 +189,25 @@ CUDD::BDD VarMgr::output_cube() const {
   return mgr_->computeCube(output_variables_);
 }
 
+bool VarMgr::is_input_variable(const std::string& var) const {
+  CUDD::BDD bdd_var = name_to_variable_.at(var);
+  if (std::find(input_variables_.begin(), input_variables_.end(), bdd_var) != input_variables_.end())
+    return true;
+  return false;
+}
+
+bool VarMgr::is_output_variable(const std::string& var) const {
+  return !(is_input_variable(var));
+}
+
+std::unordered_map<int, std::string> VarMgr::get_index_to_name() const {
+  return index_to_name_;
+}
+
+std::unordered_map<std::string, CUDD::BDD> VarMgr::get_name_to_variable() const {
+  return name_to_variable_;
+}
+
 std::vector<int> VarMgr::make_eval_vector(
     std::size_t automaton_id, const std::vector<int>& state_vector) const {
   std::vector<int> eval_vector(total_variable_count(), 0);
