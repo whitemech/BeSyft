@@ -77,6 +77,13 @@ namespace Syft {
 			 * @return std::vector<double> storing running times  
 			 */
 			std::vector<double> get_running_times() const;
+
+			/**
+			 * @brief Executes interactively the synthesized Joker strategy; user plays as the env.
+			 * 
+			 * TODO. Check parameters
+			 */
+			void interactive() const; 
 	};
 }
 #endif
