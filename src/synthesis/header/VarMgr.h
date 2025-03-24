@@ -32,6 +32,11 @@ class VarMgr {
   VarMgr();
 
   /**
+  * \brief Prints the VarMgr
+  */
+  void print_mgr() const;
+
+  /**
    * \brief Creates BDD variables and associates each with a name.
    *
    * \param variable_names The names of the variables to create. A new variable

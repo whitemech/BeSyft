@@ -193,6 +193,7 @@ int main(int argc, char** argv) {
         Syft::ProvaJokerSynthesizer joker_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
         auto result = joker_synthesizer.run();
         auto run_times = joker_synthesizer.get_running_times();
+        v_mgr->print_mgr();
         std::cout << "[BeSyft] Running time: " << sumVec(run_times) << " s" << std::endl;
         if (result.realizability) {
             std::cout << "[BeSyft] Joker realizable. Computed winning strategy" << std::endl;
