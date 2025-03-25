@@ -47,6 +47,7 @@ class Transducer {
    */
   void dump_dot(const std::string& filename) const;
 
+  std::unordered_map<int, CUDD::BDD> get_output_function() const;
 };
 
 }

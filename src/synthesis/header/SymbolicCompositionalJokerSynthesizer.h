@@ -1,10 +1,10 @@
 /*
-* This header declares the class ProvaJokerSynthesizer
+* This header declares the class SymbolicCompositionalJokerSynthesizer
 * which implements the symbolic-compositional approach to Joker synthesis
 */
 
-#ifndef SYFT_PROVAJOKERSYNTHESIZER_H
-#define SYFT_PROVAJOKERSYNTHESIZER_H
+#ifndef SYFT_SYMBOLICCOMPOSITIONALJOKERSYNTHESIZER_H
+#define SYFT_SYMBOLICCOMPOSITIONALJOKERSYNTHESIZER_H
 
 #include"ExplicitStateDfaMona.h"
 #include"ExplicitStateDfa.h"
@@ -18,7 +18,7 @@
 
 namespace Syft {
 
-	class ProvaJokerSynthesizer {
+	class SymbolicCompositionalJokerSynthesizer {
 	
 		protected:
 			std::shared_ptr<Syft::VarMgr> var_mgr_;
@@ -46,7 +46,7 @@ namespace Syft {
 			* \param starting_player Player who moves first each turn
 			* 
 			*/
-			ProvaJokerSynthesizer(std::shared_ptr<VarMgr> var_mgr,
+			SymbolicCompositionalJokerSynthesizer(std::shared_ptr<VarMgr> var_mgr,
 									std::string agent_specification,
 									std::string environment_specification,
 									InputOutputPartition partition,
@@ -83,7 +83,7 @@ namespace Syft {
 			 * 
 			 * TODO. Check parameters
 			 */
-			void interactive() const; 
+			void interactive(const SynthesisResult& joker_result) const; 
 	};
 }
 #endif

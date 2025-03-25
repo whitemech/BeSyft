@@ -24,7 +24,6 @@ SynthesisResult ReachabilitySynthesizer::run() const {
 
     CUDD::BDD new_winning_states = project_into_states(new_winning_moves);
 
-
     if (includes_initial_state(new_winning_states)) {
         result.realizability = true;
         result.winning_states = new_winning_states;
@@ -35,6 +34,8 @@ SynthesisResult ReachabilitySynthesizer::run() const {
         result.transducer = std::make_unique<Transducer>(
               var_mgr_, initial_vector_, strategy, spec_.transition_function(),
               starting_player_, protagonist_player_);
+
+        result.cost = 0;
         return result;
 
     } else if (new_winning_states == winning_states) {
@@ -48,6 +49,8 @@ SynthesisResult ReachabilitySynthesizer::run() const {
         result.transducer = std::make_unique<Transducer>(
               var_mgr_, initial_vector_, strategy, spec_.transition_function(),
               starting_player_, protagonist_player_);
+
+        result.cost = 0;
         return result;
     }
 

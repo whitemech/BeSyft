@@ -2,13 +2,13 @@
 // JokerDfaGameSynthesizer type
 // Used to perfrom co operative synthesis
 
-#ifndef J_DFA_GAME_SYNTHESIZER_H
-#define J_DFA_GAME_SYNTHESIZER_H
+#ifndef JOKER_DFA_GAME_SYNTHESIZER_H
+#define JOKER_DFA_GAME_SYNTHESIZER_H
 
-#include"Quantification.h"
-#include"SymbolicStateDfa.h"
-#include"Synthesizer.h"
-#include"Transducer.h"
+#include "Quantification.h"
+#include "SymbolicStateDfa.h"
+#include "Synthesizer.h"
+#include "Transducer.h"
 
 namespace Syft {
 
@@ -43,4 +43,4 @@ namespace Syft {
     };
 
 } 
-#endif // J_DFA_GANE_SYNTHESIZER_H
+#endif // JOKER_DFA_GANE_SYNTHESIZER_H

@@ -7,7 +7,7 @@
 #include"Stopwatch.h"
 #include"ExplicitStateDfaMona.h"
 #include"SymbolicCompositionalBestEffortSynthesizer.h"
-#include"ProvaJokerSynthesizer.h"
+#include"SymbolicCompositionalJokerSynthesizer.h"
 #include"MonolithicBestEffortSynthesizer.h"
 #include"ExplicitCompositionalBestEffortSynthesizer.h"
 #include"AdversarialSynthesizer.h"
@@ -190,7 +190,7 @@ int main(int argc, char** argv) {
         //             outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Unr" << std::endl;
         //         }
         // }
-        Syft::ProvaJokerSynthesizer joker_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
+        Syft::SymbolicCompositionalJokerSynthesizer joker_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
         auto result = joker_synthesizer.run();
         auto run_times = joker_synthesizer.get_running_times();
         v_mgr->print_mgr();
@@ -205,7 +205,17 @@ int main(int argc, char** argv) {
                     if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
                     outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Adv" << std::endl;
                 }
+            joker_synthesizer.interactive(result);
+        }
+        else {
+            std::cout << "[BeSyft] Not Joker realizable." << std::endl;
+            if (outfile != "") {
+                std::ofstream outstream(outfile, std::ifstream::app);
+                outstream << "Symbolic-Compositional Joker Synthesizer," << agent_file << "," << environment_file << ",";
+                if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
+                outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Adv" << std::endl;
             }
+        }
 
     }
     else if (alg_id == 4) {

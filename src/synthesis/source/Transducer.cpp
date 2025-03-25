@@ -39,4 +39,9 @@ void Transducer::dump_dot(const std::string& filename) const {
 
   var_mgr_->dump_dot(output_vector, output_labels, filename);
   }
+
+  std::unordered_map<int, CUDD::BDD> Transducer::get_output_function() const {
+    return output_function_;
+  }
+
 }
