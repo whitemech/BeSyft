@@ -48,21 +48,13 @@ void VarMgr::print_mgr() const {
 void VarMgr::create_named_variables(
     const std::vector<std::string>& variable_names) {
   for (const std::string& name : variable_names) {
-    // debug
-    // std::cout << name << std::endl;
     // Only create the variable if it doesn't already exist
     if (name_to_variable_.find(name) == name_to_variable_.end()) {
-      // std::cout << "Variable does not exists... creating variable" << std::endl;
       CUDD::BDD new_variable = mgr_->bddVar();
-      // std::cout << "Variable created..." << std::endl;
-      // std::cout << "Reading index..." << std::endl;
       int new_index = new_variable.NodeReadIndex();
       name_to_variable_[name] = new_variable;
       index_to_name_[new_index] = name;
-    } else {
-      // std::cout << "Variable exists... next variable" << std::endl;
     }
-    // std::cout << "Next variable..." << std::endl;
   }
 }
 
@@ -83,6 +75,24 @@ std::size_t VarMgr::create_state_variables(std::size_t variable_count) {
 
   state_variable_count_ += variable_count;
 
+  return automaton_id;
+}
+
+std::size_t VarMgr::create_named_state_variables(const std::vector<std::string>& vars) {
+  std::size_t automaton_id = state_variables_.size();
+
+  state_variables_.emplace_back();
+  state_variables_[automaton_id].reserve(vars.size());
+
+  for (int i = 0; i < vars.size(); ++i) {
+    CUDD::BDD new_state_var = mgr_->bddNewVarAtLevel(0);
+    state_variables_[automaton_id].push_back(new_state_var);
+    name_to_variable_[vars[i]] = new_state_var;
+    index_to_name_[new_state_var.NodeReadIndex()] = vars[i]; 
+  }
+  std::cout << vars.size() << std::endl;
+
+  state_variable_count_ += vars.size();
   return automaton_id;
 }
 
@@ -149,6 +159,22 @@ void VarMgr::partition_variables(const std::vector<std::string>& input_names,
   }
 }
 
+void VarMgr::create_input_variables(
+  const std::vector<std::string>& input_vars
+) {
+  for (const std::string& input_var : input_vars) {
+    input_variables_.push_back(name_to_variable_[input_var]);
+    }
+}
+
+void VarMgr::create_output_variables(
+  const std::vector<std::string>& output_vars
+) {
+  for (const std::string& output_var : output_vars) {
+    output_variables_.push_back(name_to_variable_[output_var]);
+    }
+}
+
 std::shared_ptr<CUDD::Cudd> VarMgr::cudd_mgr() const {
   return mgr_;
 }
@@ -206,6 +232,10 @@ std::unordered_map<int, std::string> VarMgr::get_index_to_name() const {
 
 std::unordered_map<std::string, CUDD::BDD> VarMgr::get_name_to_variable() const {
   return name_to_variable_;
+}
+
+std::vector<CUDD::BDD> VarMgr::get_state_variables(std::size_t automaton_id) const {
+  return state_variables_[automaton_id];
 }
 
 std::vector<int> VarMgr::make_eval_vector(

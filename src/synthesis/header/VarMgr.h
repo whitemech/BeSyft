@@ -56,6 +56,30 @@ class VarMgr {
    */
   std::size_t create_state_variables(std::size_t variable_count);
 
+    /**
+    * \brief Creates and store named state variables
+    * 
+    * \param vars The state variables to create
+    * \return The automaton ID the variables are associated with.
+    */
+  std::size_t create_named_state_variables(const std::vector<std::string>& vars);
+
+  /**
+   * \brief Create and store input variables
+   * 
+   * \param input_vars The input variables to create
+   * \return void. Adds input_vars to input variables
+   */
+  void create_input_variables(const std::vector<std::string>& input_vars);
+
+  /**
+   * \brief Create and store output variables
+   * 
+   * \param output_vars The input variables to create
+   * \return void. Adds output_vars to output variables
+   */
+  void create_output_variables(const std::vector<std::string>& output_vars);
+
   /**
    * \brief Registers a new automaton ID associated with a product state space.
    *
@@ -161,6 +185,14 @@ class VarMgr {
    * 
    */
   std::unordered_map<std::string, CUDD::BDD> get_name_to_variable() const;
+
+  /**
+   * \brief get the state variables of the automaton with the given automaton_id
+   * 
+   * \param automaton_id. The automaton_id of the DFA whose state variables are being returned
+   * \return std::vector<CUDD::BDD> of state variables
+   */
+  std::vector<CUDD::BDD> get_state_variables(std::size_t automaton_id) const;
 
   /**
    * @brief Determine whether a string is an input variable
