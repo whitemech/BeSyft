@@ -6,6 +6,7 @@
 #include<CLI/CLI.hpp>
 #include"VarMgr.h"
 #include"LTLfFONDSynthesizer.h"
+#include"LTLfFONDJokerSynthesizer.h"
 using namespace std;
 
 double sumVec(const std::vector<double>& v) 
@@ -46,7 +47,21 @@ int main(int argc, char** argv) {
 
     std::shared_ptr<Syft::VarMgr> var_mgr = std::make_shared<Syft::VarMgr>();
 
-    Syft::LTLfFONDSynthesizer synthesizer(
+    // Syft::LTLfFONDSynthesizer synthesizer(
+    //     var_mgr,
+    //     domain_file, 
+    //     problem_file,
+    //     goal_file); 
+
+    // Syft::SynthesisResult result = synthesizer.run();
+
+    // auto running_times = synthesizer.get_running_times();
+    // auto run_time = sumVec(running_times);
+
+    // if (result.realizability) std::cout << "[syft4fond] Synthesis is REALIZABLE [" << run_time << " s]" << std::endl;
+    // else std::cout << "[syft4fond] Synthesis is UNREALIZABLE [" << run_time << " s]" << std::endl;
+
+    Syft::LTLfFONDJokerSynthesizer synthesizer(
         var_mgr,
         domain_file, 
         problem_file,
@@ -57,8 +72,10 @@ int main(int argc, char** argv) {
     auto running_times = synthesizer.get_running_times();
     auto run_time = sumVec(running_times);
 
-    if (result.realizability) std::cout << "[syft4fond] Synthesis is REALIZABLE [" << run_time << " s]" << std::endl;
-    else std::cout << "[syft4fond] Synthesis is UNREALIZABLE [" << run_time << " s]" << std::endl;
+    // if (result.realizability) {
+    //     std::cout << "[syft4fond] Synthesis is JOKER REALIZABLE [" << run_time << " s]" << std::endl;
+    // }
+    // else std::cout << "[syft4fond] Synthesis is not JOKER REALIZABLE [" << run_time << " s]" << std::endl;
 
     if (out_file != "") {
         if (!(std::filesystem::exists(out_file))) {

@@ -251,9 +251,9 @@ namespace Syft
             std::cout << std::endl;
         
             // gets output function and alternative output function if a state is a witness
-            bool state_is_witness = false;
+            //bool state_is_witness = false;
             if (winning_region.Eval(state.data()).IsOne()) {
-                std::cout << "[BeSyft][interactive] Agent in winning region uses winning strategy" << std::endl;
+                std::cout << "[BeSyft][interactive] Agent in Joker winning region uses winning strategy" << std::endl;
                 output_function = joker_result.transducer.get()->get_output_function();
             // } else if (cooperative_region.Eval(state.data()).IsOne()) {
             //     std::cout << "[BeSyft][interactive] Agent in cooperative region uses cooperative strategy" << std::endl;
@@ -290,20 +290,20 @@ namespace Syft
                 }
 
                 // shows witness if current state has one
-                if (state_is_witness) {
-                    std::cout << "[BeSyft][interactive] Alternative agent move (witness no dominant strategy exist): " << std::endl;
-                    for (int i = 0; i < id_to_var.size(); ++i) {
-                        std::string var = id_to_var[i];
-                        int agent_eval;
-                        if (var_mgr_->is_output_variable(var)) {
-                            std::cout << "Variable: " << var;
-                            std::cout << ". Agent output (0 = false, 1 = true): ";
-                            agent_eval = alternative_output_function[i].Eval(state.data()).IsOne();
-                            std::cout << agent_eval << std::endl;
-                            // transition[i] = agent_eval; // do not update transitions
-                        }
-                    }
-                } 
+                // if (state_is_witness) {
+                //     std::cout << "[BeSyft][interactive] Alternative agent move (witness no dominant strategy exist): " << std::endl;
+                //     for (int i = 0; i < id_to_var.size(); ++i) {
+                //         std::string var = id_to_var[i];
+                //         int agent_eval;
+                //         if (var_mgr_->is_output_variable(var)) {
+                //             std::cout << "Variable: " << var;
+                //             std::cout << ". Agent output (0 = false, 1 = true): ";
+                //             agent_eval = alternative_output_function[i].Eval(state.data()).IsOne();
+                //             std::cout << agent_eval << std::endl;
+                //             // transition[i] = agent_eval; // do not update transitions
+                //         }
+                //     }
+                // } 
 
                 // environment turn
                 std::cout << "[BeSyft][interactive] Environment move (type 1 if var is true, else 0): " << std::endl;
@@ -349,20 +349,20 @@ namespace Syft
                 }
 
                 // shows witness if current state has one
-                if (state_is_witness) {
-                    std::cout << "[BeSyft][interactive] Alternative agent move (witness no dominant strategy exist): " << std::endl;
-                    for (int i = 0; i < id_to_var.size(); ++i) {
-                        std::string var = id_to_var[i];
-                        int agent_eval;
-                        if (var_mgr_->is_output_variable(var)) {
-                            std::cout << "Variable: " << var;
-                            std::cout << ". Agent output (0 = false, 1 = true): ";
-                            agent_eval = alternative_output_function[i].Eval(state.data()).IsOne();
-                            std::cout << agent_eval << std::endl;
-                            // transition[i] = agent_eval; // do not update transitions
-                        }
-                    } 
-                }
+                // if (state_is_witness) {
+                //     std::cout << "[BeSyft][interactive] Alternative agent move (witness no dominant strategy exist): " << std::endl;
+                //     for (int i = 0; i < id_to_var.size(); ++i) {
+                //         std::string var = id_to_var[i];
+                //         int agent_eval;
+                //         if (var_mgr_->is_output_variable(var)) {
+                //             std::cout << "Variable: " << var;
+                //             std::cout << ". Agent output (0 = false, 1 = true): ";
+                //             agent_eval = alternative_output_function[i].Eval(state.data()).IsOne();
+                //             std::cout << agent_eval << std::endl;
+                //             // transition[i] = agent_eval; // do not update transitions
+                //         }
+                //     } 
+                // }
             }
 
             std::cout << "[BeSyft][interactive] Input to transitions: ";

@@ -321,10 +321,10 @@ namespace Syft {
 
             void interactive(const SymbolicStateDfa& domain_dfa) const;
 
+            std::vector<int> to_bits(int i, std::size_t size) const;
+
         private:
             std::size_t get_bits(const std::unordered_set<std::string>& set) const;
-
-            std::vector<int> to_bits(int i, std::size_t size) const;
 
             void parse_sas();
 

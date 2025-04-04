@@ -223,7 +223,11 @@ bool VarMgr::is_input_variable(const std::string& var) const {
 }
 
 bool VarMgr::is_output_variable(const std::string& var) const {
-  return !(is_input_variable(var));
+  //return !(is_input_variable(var));
+  CUDD::BDD bdd_var = name_to_variable_.at(var);
+  if (std::find(output_variables_.begin(), output_variables_.end(), bdd_var) != output_variables_.end())
+    return true;
+  return false;
 }
 
 std::unordered_map<int, std::string> VarMgr::get_index_to_name() const {

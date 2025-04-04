@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 
     std::shared_ptr<Syft::VarMgr> v_mgr = std::make_shared<Syft::VarMgr>();
 
-    cout << "[BeSyft] Ready to start best-effort synthesis" << endl;
+    cout << "[BeSyft] Ready to start Joker synthesis" << endl;
 
     if (alg_id == 1) {
         Syft::MonolithicBestEffortSynthesizer best_effort_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
@@ -209,12 +209,6 @@ int main(int argc, char** argv) {
         }
         else {
             std::cout << "[BeSyft] Not Joker realizable." << std::endl;
-            if (outfile != "") {
-                std::ofstream outstream(outfile, std::ifstream::app);
-                outstream << "Symbolic-Compositional Joker Synthesizer," << agent_file << "," << environment_file << ",";
-                if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
-                outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Adv" << std::endl;
-            }
         }
 
     }
