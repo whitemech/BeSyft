@@ -18,7 +18,6 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
   CUDD::BDD winning_states = state_space_ & goal_states_;
   CUDD::BDD winning_moves = goal_moves_; //ELISA CHANGED
   CUDD::BDD env_error_bdd;
-  CUDD::BDD ag_error_bdd;
   int env_error_index;
   bool PDDL_domain = false;
   std::unordered_map<int, std::string> id_to_var = var_mgr_->get_index_to_name(); 
@@ -27,7 +26,7 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
       if (var == "env_err") {
             PDDL_domain = true;
             env_error_index = i;
-            env_error_bdd = var_mgr_->name_to_variable("env_err");//spec_.transition_function()[env_error_index]; //var_mgr_->name_to_variable("env_err");
+            env_error_bdd = var_mgr_->name_to_variable("env_err");
             break;
       }
   } 
@@ -39,12 +38,12 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
   
   while (true) {
     CUDD::BDD new_winning_moves_star = winning_moves |                                           
-                                  (state_space_ & (!winning_states) & (preimage_star(winning_states & !env_error_bdd)));    //t_star   & preimage_star(!env_error_bdd)
+                                  (state_space_ & (!winning_states) & preimage_star(winning_states & !env_error_bdd));    //t_star
 
     CUDD::BDD new_winning_states_star = project_into_states(new_winning_moves_star);        //w_star
 
     CUDD::BDD new_winning_moves = new_winning_moves_star |                                           
-                                  (state_space_ & (!new_winning_states_star) & preimage(new_winning_states_star) | env_error_bdd);    //t_hat   | preimage(env_error_bdd)
+                                  (state_space_ & (!new_winning_states_star) & preimage(new_winning_states_star) | env_error_bdd);    //t_hat
 
     CUDD::BDD new_winning_states = project_into_states(new_winning_moves);        //w_hat
     

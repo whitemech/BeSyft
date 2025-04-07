@@ -252,8 +252,11 @@ namespace Syft
         
             // gets output function and alternative output function if a state is a witness
             //bool state_is_witness = false;
-            if (winning_region.Eval(state.data()).IsOne()) {
-                std::cout << "[BeSyft][interactive] Agent in Joker winning region uses winning strategy" << std::endl;
+            if (winning_region.Eval(state.data()).IsOne() && joker_result.cost == 0) {
+                std::cout << "[BeSyft][interactive] Agent in winning region uses winning strategy" << std::endl;
+                output_function = joker_result.transducer.get()->get_output_function();
+            } else if (winning_region.Eval(state.data()).IsOne() && joker_result.cost > 0) {
+                std::cout << "[BeSyft][interactive] Agent in Joker winning region uses Joker strategy" << std::endl;
                 output_function = joker_result.transducer.get()->get_output_function();
             // } else if (cooperative_region.Eval(state.data()).IsOne()) {
             //     std::cout << "[BeSyft][interactive] Agent in cooperative region uses cooperative strategy" << std::endl;

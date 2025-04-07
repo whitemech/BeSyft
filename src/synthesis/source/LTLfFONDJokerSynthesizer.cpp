@@ -218,11 +218,16 @@ namespace Syft {
             }
             state_eval.insert(state_eval.end(), state.begin() + number_of_fluents, state.end());
 
-            if (winning_states.Eval(state_eval.data()).IsOne()){
+            if (winning_states.Eval(state_eval.data()).IsOne() && joker_result.cost == 0){
                 output_function = joker_result.transducer.get()->get_output_function();
                 std::cout << "[INTERACTIVE] Agent follows winning strategy." << std::endl; 
+            } else if(winning_states.Eval(state_eval.data()).IsOne() && joker_result.cost > 0){
+                output_function = joker_result.transducer.get()->get_output_function();
+                std::cout << "[INTERACTIVE] Agent follows Joker strategy." << std::endl; 
+
             } else {
                 std::cout << "[INTERACTIVE] Agent in losing region." << std::endl; 
+                
                 if (var_mgr_->state_variable(dfa_game.automaton_id(), vars_.size()).Eval(state_eval.data()).IsOne()){ //agent_error_bdd.Eval(state_eval.data()).IsOne()){//
                     std::cout << "- AGENT ERROR STATE -";
                     std::cout << "[INTERACTIVE] Termination" << std::endl;

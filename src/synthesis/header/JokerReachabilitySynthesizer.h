@@ -12,7 +12,7 @@ class JokerReachabilitySynthesizer : public JokerDfaGameSynthesizer {
  private:
 
   CUDD::BDD goal_states_;
-  CUDD::BDD goal_moves_; //ELISA CHANGED --- probabilmente da problemi da capire
+  CUDD::BDD goal_moves_; //ELISA CHANGED
   CUDD::BDD state_space_;
   
  public:
