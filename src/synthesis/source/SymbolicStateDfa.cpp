@@ -285,7 +285,7 @@ SymbolicStateDfa SymbolicStateDfa::restriction(const CUDD::BDD& invalid_states) 
   return restricted_dfa;
 }
 
-SymbolicStateDfa SymbolicStateDfa::domain_compose(const std::vector<SymbolicStateDfa>& dfa_vector) {
+SymbolicStateDfa SymbolicStateDfa::domain_compose(const std::vector<SymbolicStateDfa>& dfa_vector,const bool adv) {
   // order of variables is:
   // (F, Act, React, Z_{\varphi})
   // i.e., goal DFA is created after domain DFA
@@ -348,8 +348,12 @@ SymbolicStateDfa SymbolicStateDfa::domain_compose(const std::vector<SymbolicStat
   CUDD::BDD agent_error_bdd = var_mgr->get_state_variables(dfa_vector[0].automaton_id()).at(agent_error_index);
   CUDD::BDD env_error_bdd = var_mgr->get_state_variables(dfa_vector[0].automaton_id()).at(env_error_index);
 
-  final_states = (!agent_error_bdd) * (env_error_bdd +  final_states);
-  
+  if(adv){
+    final_states = (!agent_error_bdd) * (env_error_bdd +  final_states);
+  }
+  else{
+    final_states = (!agent_error_bdd) * (!env_error_bdd) *  final_states;
+  }
 
   // 5. construct symbolic DFA
   SymbolicStateDfa composed_automaton(var_mgr);

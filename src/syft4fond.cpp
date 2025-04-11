@@ -7,6 +7,8 @@
 #include"VarMgr.h"
 #include"LTLfFONDSynthesizer.h"
 #include"LTLfFONDJokerSynthesizer.h"
+#include"LTLfFONDCoOperativeSynthesizer.h"
+
 using namespace std;
 
 double sumVec(const std::vector<double>& v) 
@@ -24,6 +26,7 @@ int main(int argc, char** argv) {
 
     string domain_file, problem_file, goal_file, out_file;
     bool interactive = false;
+    int synthesis_id;
 
     CLI::Option* domain_file_opt =
         app.add_option("-d,--domain-file", domain_file, "Path to PDDL domain file") ->
@@ -43,6 +46,9 @@ int main(int argc, char** argv) {
     CLI::Option* out_file_opt =
         app.add_option("-o,--out-file", out_file, "Path to output .csv file. Stores:\n1. PDDL domain file\n2. PDDL problem file\n3. Run time (secs)\n4. PDDL parsing (secs)\n5. PDDL2DFA (secs)\n6. Synthesis (secs)\n7. Realizability (0,1)");
 
+    CLI::Option* synthesis_id_opt =
+        app.add_option("-s,--strategy", synthesis_id, "Specifies type of synthesis to use:\nBest-Effort Synthesis=1;\nJoker Synthesis=2") -> required();
+
     CLI11_PARSE(app, argc, argv);
 
     std::shared_ptr<Syft::VarMgr> var_mgr = std::make_shared<Syft::VarMgr>();
@@ -60,33 +66,66 @@ int main(int argc, char** argv) {
 
     // if (result.realizability) std::cout << "[syft4fond] Synthesis is REALIZABLE [" << run_time << " s]" << std::endl;
     // else std::cout << "[syft4fond] Synthesis is UNREALIZABLE [" << run_time << " s]" << std::endl;
-
-    Syft::LTLfFONDJokerSynthesizer synthesizer(
-        var_mgr,
-        domain_file, 
-        problem_file,
-        goal_file); 
-
-    Syft::SynthesisResult result = synthesizer.run();
-
-    auto running_times = synthesizer.get_running_times();
-    auto run_time = sumVec(running_times);
-
-    // if (result.realizability) {
-    //     std::cout << "[syft4fond] Synthesis is JOKER REALIZABLE [" << run_time << " s]" << std::endl;
-    // }
-    // else std::cout << "[syft4fond] Synthesis is not JOKER REALIZABLE [" << run_time << " s]" << std::endl;
-
-    if (out_file != "") {
-        if (!(std::filesystem::exists(out_file))) {
-            std::ofstream outstream(out_file);
-            outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
-            outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
-        } else {
-            std::ofstream outstream(out_file, std::ofstream::app);
-            outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+    if (synthesis_id == 1){
+        Syft::LTLfFONDCoOperativeSynthesizer synthesizer(
+            var_mgr,
+            domain_file, 
+            problem_file,
+            goal_file); 
+    
+        std::pair<Syft::SynthesisResult, Syft::SynthesisResult> result = synthesizer.run();
+    
+        auto running_times = synthesizer.get_running_times();
+        auto run_time = sumVec(running_times);
+    
+        // if (result.realizability) {
+        //     std::cout << "[syft4fond] Synthesis is JOKER REALIZABLE [" << run_time << " s]" << std::endl;
+        // }
+        // else std::cout << "[syft4fond] Synthesis is not JOKER REALIZABLE [" << run_time << " s]" << std::endl;
+    
+        if (out_file != "") {
+            if (!(std::filesystem::exists(out_file))) {
+                std::ofstream outstream(out_file);
+                outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
+                outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            } else {
+                std::ofstream outstream(out_file, std::ofstream::app);
+                outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            }
         }
+        
+        return 0;
+
+    } else{
+        Syft::LTLfFONDJokerSynthesizer synthesizer(
+            var_mgr,
+            domain_file, 
+            problem_file,
+            goal_file); 
+    
+        Syft::SynthesisResult result = synthesizer.run();
+    
+        auto running_times = synthesizer.get_running_times();
+        auto run_time = sumVec(running_times);
+    
+        // if (result.realizability) {
+        //     std::cout << "[syft4fond] Synthesis is JOKER REALIZABLE [" << run_time << " s]" << std::endl;
+        // }
+        // else std::cout << "[syft4fond] Synthesis is not JOKER REALIZABLE [" << run_time << " s]" << std::endl;
+    
+        if (out_file != "") {
+            if (!(std::filesystem::exists(out_file))) {
+                std::ofstream outstream(out_file);
+                outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
+                outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            } else {
+                std::ofstream outstream(out_file, std::ofstream::app);
+                outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            }
+        }
+        
+        return 0;
+
     }
     
-    return 0;
 }
