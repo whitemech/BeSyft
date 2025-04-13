@@ -94,6 +94,8 @@ namespace Syft {
             if (joker_result.realizability){
                 std::cout << "[syft4fond] Joker moves counter: " << joker_result.cost << std::endl;
                 interactive(domain, dfa_game, joker_result);
+            } else {
+                std::cout << "[syft4fond] The game is NOT Joker realizable" << std::endl;
             }
 
                 

@@ -33,7 +33,7 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
   
   if (!PDDL_domain)
       env_error_bdd = var_mgr_->cudd_mgr()->bddZero();
-
+ 
   int k = 1;
   
   while (true) {
@@ -42,11 +42,24 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
 
     CUDD::BDD new_winning_states_star = project_into_states(new_winning_moves_star);        //w_star
 
-    CUDD::BDD new_winning_moves = new_winning_moves_star |                                           
-                                  (state_space_ & (!new_winning_states_star) & preimage(new_winning_states_star) | env_error_bdd);    //t_hat
+    CUDD::BDD winning_moves_hat = new_winning_moves_star;
+    CUDD::BDD winning_states_hat = new_winning_states_star;
 
-    CUDD::BDD new_winning_states = project_into_states(new_winning_moves);        //w_hat
-    
+    CUDD::BDD new_winning_moves;
+    CUDD::BDD new_winning_states;
+    while (true) {
+      new_winning_moves = winning_moves_hat |
+                                    (state_space_ & (!winning_states_hat) & preimage(winning_states_hat)| env_error_bdd);
+  
+      new_winning_states = project_into_states(new_winning_moves);
+  
+      if (includes_initial_state(new_winning_states) || new_winning_states == winning_states_hat) {
+          break;
+      }
+  
+      winning_moves_hat = new_winning_moves;
+      winning_states_hat = new_winning_states;
+    }
 
     if (includes_initial_state(new_winning_states)) {
         result.realizability = true;
