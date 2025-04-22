@@ -155,11 +155,18 @@ if __name__ == "__main__":
     # grounded invariants
     predicates_file = open("predicates_file.txt", "w")
     objects_file = open("objects_file.txt", "w")
+    types_file = open("types_file.txt", "w")
     invariants_file = open("invariants_file.txt", "w")
     for pred in task.predicates:
         predicates_file.write(str(pred)+"\n")
     for obj in task.objects: # Gianmarco. Prints objects
         objects_file.write(str(obj)+"\n")
+    for ty in task.types: # Elisa. Prints types
+        #print(str(ty.name) + ": " + str(ty.basetype_name) + "\n")
+        if (str(ty.basetype_name) != "object"):
+            types_file.write(str(ty.name) + ": " + str(ty.basetype_name) + "\n")
+        else:
+            types_file.write(str(ty.name) + "\n")  
     for group in groups:
         # print("[%s]" % ", ".join(map(str, group)))
         invariants_file.write("[%s]" % "; ".join(map(str, group)) + "\n")

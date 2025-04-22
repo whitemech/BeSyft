@@ -46,7 +46,7 @@ namespace Syft {
                 const std::string& ltlf_file
             );
 
-            std::pair<SynthesisResult, SynthesisResult> run();
+            std::pair<SynthesisResult, SynthesisResult> run(const bool interactive);
 
             std::vector<double> get_running_times() const {
                 return running_times_;

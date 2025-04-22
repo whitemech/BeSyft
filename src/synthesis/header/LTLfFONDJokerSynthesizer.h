@@ -46,7 +46,7 @@ namespace Syft {
                 const std::string& ltlf_file
             );
 
-            SynthesisResult run();
+            SynthesisResult run(const bool inter);
 
             std::vector<double> get_running_times() const {
                 return running_times_;

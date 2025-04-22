@@ -8,7 +8,7 @@ namespace Syft {
         const std::string& goal_file
     ) : var_mgr_(var_mgr), domain_file_(domain_file), init_file_(init_file), goal_file_(goal_file) {}
 
-    SynthesisResult LTLfFONDJokerSynthesizer::run() {
+    SynthesisResult LTLfFONDJokerSynthesizer::run(const bool inter) {
         // 1. construct DFA of planning domain
         std::cout << "[syft4fond] Transforming PDDL into DFA...";
         Stopwatch pddl2dfa;
@@ -36,7 +36,7 @@ namespace Syft {
         ltlf_goal = parse_goal(domain, ltlf_goal);
 
         // iii. LTLf -> DFA
-        ExplicitStateDfaMona goal_mona_dfa = ExplicitStateDfaMona::dfa_of_formula(ltlf_goal);
+        ExplicitStateDfaMona goal_mona_dfa = ExplicitStateDfaMona::dfa_of_formula(ltlf_goal); //CRASH
         // std::cout << "PRINT GOAL DFA" << std::endl;
         // goal_mona_dfa.dfa_print();
         ExplicitStateDfa goal_dfa = ExplicitStateDfa::from_dfa_mona(var_mgr_, goal_mona_dfa);
@@ -93,7 +93,8 @@ namespace Syft {
 
             if (joker_result.realizability){
                 std::cout << "[syft4fond] Joker moves counter: " << joker_result.cost << std::endl;
-                interactive(domain, dfa_game, joker_result);
+                if (inter)
+                    interactive(domain, dfa_game, joker_result);
             } else {
                 std::cout << "[syft4fond] The game is NOT Joker realizable" << std::endl;
             }

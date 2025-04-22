@@ -23,31 +23,36 @@ SynthesisResult CoOperativeReachabilitySynthesizer::run() const {
 
     CUDD::BDD new_winning_states = project_into_states(new_winning_moves);
 
-    if (includes_initial_state(new_winning_states)) {
-        result.realizability = true;
-        result.winning_states = new_winning_states;
-        std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
-              new_winning_moves);
+    if(new_winning_states == winning_states){
 
-        result.transducer = std::make_unique<Transducer>(
-              var_mgr_, initial_vector_, strategy, spec_.transition_function(),
-              starting_player_, protagonist_player_);
-        return result;
+      if (includes_initial_state(new_winning_states)) {
+          result.realizability = true;
+          result.winning_states = new_winning_states;
+          result.winning_moves = new_winning_moves;
+          std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
+                new_winning_moves);
 
-    } else if (new_winning_states == winning_states) {
-        result.realizability = false;
-        result.winning_states = new_winning_states;
-        // result.transducer = nullptr;
-        std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
-          new_winning_moves);
+          result.transducer = std::make_unique<Transducer>(
+                var_mgr_, initial_vector_, strategy, spec_.transition_function(),
+                starting_player_, protagonist_player_);
+          return result;
 
-        result.transducer = std::make_unique<Transducer>(
-              var_mgr_, initial_vector_, strategy, spec_.transition_function(),
-              starting_player_, protagonist_player_);
-        return result;
-    
+      } else {
+          result.realizability = false;
+          result.winning_states = new_winning_states;
+          result.winning_moves = new_winning_moves;
+          // result.transducer = nullptr;
+          std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
+            new_winning_moves);
+
+          result.transducer = std::make_unique<Transducer>(
+                var_mgr_, initial_vector_, strategy, spec_.transition_function(),
+                starting_player_, protagonist_player_);
+          return result;
+      
+      }
     }
-
+    
     winning_moves = new_winning_moves;
     winning_states = new_winning_states;
   }

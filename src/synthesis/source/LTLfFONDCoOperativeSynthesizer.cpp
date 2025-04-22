@@ -8,7 +8,7 @@ namespace Syft {
         const std::string& goal_file
     ) : var_mgr_(var_mgr), domain_file_(domain_file), init_file_(init_file), goal_file_(goal_file) {}
 
-    std::pair<SynthesisResult, SynthesisResult> LTLfFONDCoOperativeSynthesizer::run() {
+    std::pair<SynthesisResult, SynthesisResult> LTLfFONDCoOperativeSynthesizer::run(const bool inter) {
         // 1. construct DFA of planning domain
         std::cout << "[syft4fond] Transforming PDDL into DFA...";
         Stopwatch pddl2dfa;
@@ -89,7 +89,7 @@ namespace Syft {
             double t_CoopGame = synthesis.stop().count() / 1000.0;
             running_times_.push_back(t_CoopGame);
             std::cout << "DONE in " << t_CoopGame << " s" << std::endl;
-            if (result.first.realizability)
+            if (inter)
                 interactive(domain, dfa_game[0], result);
             return result;
         } else if (result.second.realizability){
@@ -97,7 +97,7 @@ namespace Syft {
             double t_CoopGame = synthesis.stop().count() / 1000.0;
             running_times_.push_back(t_CoopGame);
             std::cout << "DONE in " << t_CoopGame << " s" << std::endl;
-            if (result.second.realizability){
+            if (inter){
                 interactive(domain, dfa_game[1], result);
             }
 

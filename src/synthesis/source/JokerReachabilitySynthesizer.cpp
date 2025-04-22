@@ -94,7 +94,8 @@ SynthesisResult JokerReachabilitySynthesizer::run() const { ///ELISA CHANGED
 
     winning_moves = new_winning_moves;
     winning_states = new_winning_states;
-    k++;
+    if (!includes_initial_state(new_winning_states))
+      k++;
   }
 
 }

@@ -23,10 +23,11 @@ namespace Syft {
         // read output.sas to generate data members
         parse_sas(); 
 
-        // generate invariants in three files
+        // generate invariants in four files
         // 1. predicate file
         // 2. objects file
         // 3. invariants file
+        // 4. types file
         std::string invariants_command = "./../../submodules/invariant_finder.py " + domain_pddl + " " + problem_pddl;
         system(invariants_command.c_str());
 
@@ -67,7 +68,7 @@ namespace Syft {
         }
 
         // TODO. Add code to remove printed files.
-        system("rm grounded_invs.txt invariants_file.txt output.sas objects_file.txt predicates_file.txt");
+        system("rm grounded_invs.txt invariants_file.txt output.sas objects_file.txt predicates_file.txt types_file.txt");
     }
 
     void Domain::parse_sas() {
