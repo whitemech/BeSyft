@@ -44,10 +44,10 @@ int main(int argc, char** argv) {
          app.add_option("-i,--interactive", interactive, "Executes the synthesized strategy in interactive mode");
 
     CLI::Option* out_file_opt =
-        app.add_option("-o,--out-file", out_file, "Path to output .csv file. Stores:\n1. PDDL domain file\n2. PDDL problem file\n3. PDDL parsing (secs)\n4. PDDL2DFA (secs)\n5. Synthesis (secs)\n6. Run time (secs)\n7. Realizability (0,1)");
+        app.add_option("-o,--out-file", out_file, "Path to output .csv file. Stores:\n1. PDDL domain file\n2. PDDL problem file\n3. PDDL parsing (secs)\n4. PDDL2DFA (secs)\n5. Synthesis (secs)\n6. Run time (secs)");
 
     CLI::Option* synthesis_id_opt =
-        app.add_option("-s,--synthesizer", synthesis_id, "Specifies type of synthesis to use:\nBest-Effort Synthesis=1;\nJoker Synthesis=2") -> required();
+        app.add_option("-s,--synthesizer", synthesis_id, "Specifies type of synthesis to use:\nBest-Effort Synthesis=1;\nMinimal Best-Effort Synthesis=2") -> required();
 
     CLI11_PARSE(app, argc, argv);
 
