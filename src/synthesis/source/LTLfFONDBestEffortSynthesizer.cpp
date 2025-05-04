@@ -1,14 +1,14 @@
-#include"LTLfFONDCoOperativeSynthesizer.h"
+#include"LTLfFONDBestEffortSynthesizer.h"
 
 namespace Syft {
-    LTLfFONDCoOperativeSynthesizer::LTLfFONDCoOperativeSynthesizer(
+    LTLfFONDBestEffortSynthesizer::LTLfFONDBestEffortSynthesizer(
         std::shared_ptr<VarMgr> var_mgr,
         const std::string& domain_file,
         const std::string& init_file,
         const std::string& goal_file
     ) : var_mgr_(var_mgr), domain_file_(domain_file), init_file_(init_file), goal_file_(goal_file) {}
 
-    std::pair<SynthesisResult, SynthesisResult> LTLfFONDCoOperativeSynthesizer::run(const bool inter) {
+    std::pair<SynthesisResult, SynthesisResult> LTLfFONDBestEffortSynthesizer::run(const bool inter) {
         // 1. construct DFA of planning domain
         std::cout << "[syft4fond] Transforming PDDL into DFA...";
         Stopwatch pddl2dfa;
@@ -80,9 +80,6 @@ namespace Syft {
                                                         winning_region * coop_final_states,
                                                         invariant_bdd); 
         result.second = coop_synthesizer.run();
-        // double t_CoopGame = synthesis.stop().count() / 1000.0;
-        // running_times_.push_back(t_CoopGame);
-        // std::cout << "DONE in " << t_CoopGame << " s" << std::endl;
 
         if(result.first.realizability){
             std::cout << "[syft4fond] The game is realizable" << std::endl;
@@ -113,7 +110,7 @@ namespace Syft {
         return result;
     }
 
-    std::string LTLfFONDCoOperativeSynthesizer::parse_goal(const Domain& domain, std::string& goal) const {
+    std::string LTLfFONDBestEffortSynthesizer::parse_goal(const Domain& domain, std::string& goal) const {
         std::string parsed_goal = goal;
 
         // get maps from: action names to props; and var names to bdds
@@ -150,16 +147,13 @@ namespace Syft {
     }
 
 
-    void LTLfFONDCoOperativeSynthesizer::interactive(
+    void LTLfFONDBestEffortSynthesizer::interactive(
         const Domain& domain,
         const SymbolicStateDfa& dfa_game,
         const std::pair<SynthesisResult, SynthesisResult>& result
     ) const {
         // keep in mind the order of variables
         // i.e., (F, Act, React, Z)
-
-        //domain.print_domain();
-        //var_mgr_->print_mgr();
         
         std::vector<int> state = dfa_game.initial_state();
         std::vector<CUDD::BDD> transition_function = dfa_game.transition_function();
@@ -178,11 +172,6 @@ namespace Syft {
         // // Obtain the agent error bdd and the environment error bdd from the transition function
         CUDD::BDD agent_error_bdd = dfa_game.transition_function()[agent_error_index];
         CUDD::BDD env_error_bdd = dfa_game.transition_function()[env_error_index];
-
-        // std::cout << "[pddl2dfa] env_error: " << env_error_bdd << std::endl;
-        // std::cout << "[pddl2dfa] env_error2: " << env_error_bdd2 << std::endl;
-        // CUDD::BDD env_error_bdd = var_mgr_->name_to_variable("env_err");
-        // CUDD::BDD agent_error_bdd = var_mgr_->name_to_variable("ag_err");
         
 
         CUDD::BDD adv_winning_states =  result.first.winning_states;
@@ -227,7 +216,7 @@ namespace Syft {
                 std::cout << "[INTERACTIVE] Agent follows winning strategy." << std::endl; 
             } else if(coop_winning_states.Eval(state_eval.data()).IsOne()){
                 output_function = result.second.transducer.get()->get_output_function();
-                std::cout << "[INTERACTIVE] Agent follows Cooperative strategy." << std::endl; 
+                std::cout << "[INTERACTIVE] Agent follows Best-Effort strategy." << std::endl; 
 
             } else {
                 std::cout << "[INTERACTIVE] Agent in losing region." << std::endl; 
@@ -287,9 +276,7 @@ namespace Syft {
                     actions_bit.push_back(agent_eval);
                 }
             }
-            // std::cout << "Actions_bit:" << std::endl;
-            // for (int e : actions_bit) std::cout << e;
-            // std::cout << "" << std::endl;
+            
             auto id_to_action_name = domain.get_id_to_action_name();
             int selected_act_id = -1;
             for (const auto& act_id : id_to_action_name) {

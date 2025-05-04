@@ -53,7 +53,6 @@ namespace Syft {
             }
 
             void interactive(const Domain& domain, const SymbolicStateDfa& product, const SynthesisResult& joker_result) const;
-                //const MaxSet& max_set
     };
 
 } 

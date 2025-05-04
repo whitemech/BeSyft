@@ -72,9 +72,12 @@ namespace Syft {
             double t_jokerGame = synthesis.stop().count() / 1000.0;
             running_times_.push_back(t_jokerGame);
             std::cout << "DONE in " << t_jokerGame << " s" << std::endl;
-            if (result.realizability)
-                interactive(domain, dfa_game, result);
-            return result;
+            if (result.realizability){
+                if(inter)
+                    interactive(domain, dfa_game, result);
+                return result;
+            }
+                
         } else {
             std::cout << "[syft4fond] The game is NOT realizable without Joker moves" << std::endl;
         
@@ -141,14 +144,6 @@ namespace Syft {
         return parsed_goal;
     }
 
-    // TODO (ELISA).
-    // 1. Create LTLfFONDJokerSynthesizer (attenzione: Joker game must not reach the env. error)
-    // See SymbolicStateDfa::domain_compose to retrieve env_error_bdd
-    // 2. Create function interactive -- See https://github.com/GianmarcoDIAG/syft4fond/tree/tesi-antonio for further details
-    // 3. See https://github.com/GianmarcoDIAG/syft4fond/tree/main
-    // you can find triangle-tire world benchmarks
-    // construct and test example
-
 
     void LTLfFONDJokerSynthesizer::interactive( 
         const Domain& domain,
@@ -157,9 +152,6 @@ namespace Syft {
     ) const {
         // keep in mind the order of variables
         // i.e., (F, Act, React, Z)
-
-        //domain.print_domain();
-        //var_mgr_->print_mgr();
         
         std::vector<int> state = dfa_game.initial_state();
         std::vector<CUDD::BDD> transition_function = dfa_game.transition_function();
@@ -179,13 +171,8 @@ namespace Syft {
         CUDD::BDD agent_error_bdd = dfa_game.transition_function()[agent_error_index];
         CUDD::BDD env_error_bdd = dfa_game.transition_function()[env_error_index];
 
-        // std::cout << "[pddl2dfa] env_error: " << env_error_bdd << std::endl;
-        // std::cout << "[pddl2dfa] env_error2: " << env_error_bdd2 << std::endl;
-        // CUDD::BDD env_error_bdd = var_mgr_->name_to_variable("env_err");
-        // CUDD::BDD agent_error_bdd = var_mgr_->name_to_variable("ag_err");
-        
 
-        CUDD::BDD winning_states =  joker_result.winning_states; //* !env_error_bdd;
+        CUDD::BDD winning_states =  joker_result.winning_states;
         std::unordered_map<int, CUDD::BDD> output_function;
         
         
@@ -286,9 +273,7 @@ namespace Syft {
                     actions_bit.push_back(agent_eval);
                 }
             }
-            // std::cout << "Actions_bit:" << std::endl;
-            // for (int e : actions_bit) std::cout << e;
-            // std::cout << "" << std::endl;
+            
             auto id_to_action_name = domain.get_id_to_action_name();
             int selected_act_id = -1;
             for (const auto& act_id : id_to_action_name) {

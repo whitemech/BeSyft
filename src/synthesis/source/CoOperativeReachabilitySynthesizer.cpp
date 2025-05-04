@@ -41,7 +41,6 @@ SynthesisResult CoOperativeReachabilitySynthesizer::run() const {
           result.realizability = false;
           result.winning_states = new_winning_states;
           result.winning_moves = new_winning_moves;
-          // result.transducer = nullptr;
           std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
             new_winning_moves);
 

@@ -53,11 +53,11 @@ namespace Syft {
 									Player starting_player);
 			
 			/**
-			 * @brief Solves symbolic DFA games to compute adversarially and cooperatively winning strategies
+			 * @brief Solves symbolic DFA games to compute Joker winning strategies
 			 * 
-			 * @return std::pair<SynthesisResult, SynthesisResult>. First and second are the adversarial and cooperatively winning strategies, respectively.
+			 * @return SynthesisResult: Joker winning strategy.
 			 */
-			virtual SynthesisResult run() final; //ELISA CHANGED
+			virtual SynthesisResult run() final;
 
 			/**
 			* \brief Merges two transducers into a best-effort strategy
@@ -81,7 +81,6 @@ namespace Syft {
 			/**
 			 * @brief Executes interactively the synthesized Joker strategy; user plays as the env.
 			 * 
-			 * TODO. Check parameters
 			 */
 			void interactive(const SynthesisResult& joker_result) const; 
 	};

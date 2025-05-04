@@ -10,7 +10,7 @@ namespace Syft {
     struct SynthesisResult{
         bool realizability;
         CUDD::BDD winning_states;
-        CUDD::BDD winning_moves; ////ELISA CHANGED
+        CUDD::BDD winning_moves;
         std::unique_ptr<Transducer> transducer;
         int cost;
     };

@@ -1,61 +1,52 @@
-# BeSyft
+# MBeSyft
 
-BeSyft is a tool for symbolic best-effort synthesis with LTLf goals and assumptions. The tool has been described in [1].
+MBeSyft is a tool for symbolic minimal best-effort synthesis in FOND domains.
 
 # Usage
 
-The output of `BeSyft --help` is the following:
+The output of `syft4fond --help` is the following:
 
 ```
-BeSyft: a tool for Reactive and Best-Effort Synthesis with LTLf Goals and Assumptions
-Usage: ./BeSyft [OPTIONS]
+syft4fond-ltlf: a tool for LTLf reactive synthesis in FOND planning domains
+Usage: ./syft4fond [OPTIONS]
 
 Options:
   -h,--help                   Print this help message and exit
-  -d,--print-dot              Print the output function(s)
-  -a,--agent-file TEXT:FILE REQUIRED
-                              File to agent specification
-  -e,--environment-file TEXT:FILE REQUIRED
-                              File to environment assumption
-  -p,--partition-file TEXT:FILE REQUIRED
-                              File to partition
-  -s,--starting-player INT REQUIRED
-                              Starting player:
-                              agent=1;
-                              environment=0.
-  -t,--algorithm INT REQUIRED Specifies algorithm to use:
-                              Monolithic Best-Effort Synthesis=1;
-                              Explicit-Compositional Best-Effort Synthesis=2;
-                              Symbolic-Compositional Best-Effort Synthesis=3;
-                              Adversarial Reactive Synthesis=4
-  -f,--save-results TEXT      If specified, save results in the passed file. Stores:
-                              Algorithm;
-                              Goal file;
-                              Environment file;
-                              Starting player;
-                              LTLf2DFA (s);
-                              DFA2Sym (s);
-                              Adv Game (s);
-                              Coop Game (s);
-                              Run time(s);
-                              Realizability
+  -d,--domain-file TEXT:FILE REQUIRED
+                              Path to PDDL domain file
+  -p,--problem-file TEXT:FILE REQUIRED
+                              Path to PDDL problem file
+  -g,--goal-file TEXT:FILE REQUIRED
+                              Path to LTLf goal file
+  -i,--interactive BOOLEAN    Executes the synthesized strategy in interactive mode
+  -o,--out-file TEXT          Path to output .csv file. Stores:
+                              1. PDDL domain file
+                              2. PDDL problem file
+                              3. PDDL parsing (secs)
+                              4. PDDL2DFA (secs)
+                              5. Synthesis (secs)
+                              6. Run time (secs)
+  -s,--synthesizer INT REQUIRED  Specifies type of synthesis to use:
+                              Best-Effort Synthesis=1;
+                              Minimal Best-Effort Synthesis=2
+
 ```
 
 LTLf formulas in agent and environment files should be written in Lydia's syntax. For further details, refer to https://github.com/whitemech/lydia . 
 
-To perform best-effort synthesis for an LTLf goal in some LTLf environment, you have to provide both the path to the agent goal and the environment specification, e.g., `Examples/counter_2.ltlf` and `Examples/add_request.ltlf`, and the path to the partition file, e.g., `Examples/counter_2.part`.
+To perform mbe-synthesis for an LTLf goal in some FOND planning domain, you have to provide the path to the domain specification, problem specification, and the agent goal e.g., `Examples/domain-triangle.pddl`, `Examples/test.pddl`, and `Examples/test.ltlf`.
 
 For instance, the command:
 
 ```
-./BeSyft -a Examples/counter_2.ltlf -e Examples/add_request.ltlf -p Examples/counter_2.part -s 0 -t 3 -d
+./syft4fond -d Examples/domain-triangle.pddl -p Examples/test.pddl -g Examples/test.ltlf -s 2 -i 0
 ```
 
-Performs best-effort synthesis using the symbolic-compositional algorithm.
+Performs mbe-synthesis using the symbolic-compositional algorithm.
 
 # Build from source
 
-Compilation instruction using CMake (https://cmake.org/). We recommend the use of Ubuntu 20.04 LTS. Problems can occur between some libraries on which BeSyft relies and newer versions of Ubuntu (more information below).
+Compilation instruction using CMake (https://cmake.org/). We recommend the use of Ubuntu 20.04 LTS. Problems can occur between some libraries on which MBeSyft relies and newer versions of Ubuntu (more information below).
 
 ## Install the dependencies
 
@@ -125,7 +116,7 @@ sudo apt-get install libgraphviz-dev
 
 ### Syft
 
-BeSyft depends on Syft. First, install the Boost libraries.
+MBeSyft depends on Syft. First, install the Boost libraries.
 
 ```
 sudo apt-get install libboost-dev-all
@@ -147,7 +138,7 @@ sudo make install
 
 ### Lydia:
 
-Unzip the repository and move into it `cd BeSyft`
+Unzip the repository and move into it `cd MBeSyft`
 
 Clone Lydia within the submodules folder.
 
@@ -168,7 +159,7 @@ III. substitute in repository `submodules/lydia/third_party/Catch2` with the unz
 
 IV. delete any CMakeCache.txt file which may have been generated by previous compilation processes.
 
-### Building BeSyft
+### Building MBeSyft
 
 To build, run the following commands.
 
@@ -181,30 +172,9 @@ make -j2
 
 ## Performing the Experiments
 
-To plot the results of the experiments from [1] on counter games execute:
+To plot the results of the experiments on a FOND domain (i.e. COFFEE) execute:
 
 ```
-cd EmpiricalResults/CounterGames
-python3 plot.py
+cd EmpiricalResults/COFFEE
+python plot.py
 ```
-
-Else, to execute your own experiments on counter games run:
-
-```
-sudo chmod "u+x" exe-benchs.sh
-./exe-benchs.sh
-```
-To plot execute:
-
-```
-cd Benchmarks/CounterGames
-python3 plot.py
-```
-
-## Contacts
-
-For any feedback or suggestion you can reach to: parretti@diag.uniroma1.it
-
-## References
-
-[1] De Giacomo, Giuseppe; Parretti, Gianmarco; and Zhu, Shufang 2023. Symbolic LTLf Best-Effort Synthesis. In European Conference on Multi-Agent Systems (EUMAS). Cham: Springer Nature Switzerland, 2023. p. 228-243.

@@ -6,13 +6,13 @@
 namespace Syft {
 
 /**
- * \brief A synthesizer for cooperative reachability game given as a symbolic-state DFA.
+ * \brief A synthesizer for reachability game given as a symbolic-state DFA.
  */
 class JokerReachabilitySynthesizer : public JokerDfaGameSynthesizer {
  private:
 
   CUDD::BDD goal_states_;
-  CUDD::BDD goal_moves_; //ELISA CHANGED
+  CUDD::BDD goal_moves_;
   CUDD::BDD state_space_;
   
  public:
@@ -25,15 +25,15 @@ class JokerReachabilitySynthesizer : public JokerDfaGameSynthesizer {
    * \param goal_states The set of states that the agent must reach to win.
    */
   JokerReachabilitySynthesizer(SymbolicStateDfa spec, Player starting_player, Player protagonist_player,
-			  CUDD::BDD goal_states, CUDD::BDD goal_moves, CUDD::BDD state_space); //ELISA CHANGED
+			  CUDD::BDD goal_states, CUDD::BDD goal_moves, CUDD::BDD state_space);
 
     /**
      * \brief Solves the reachability game.
      *
      * \return The result consists of
      * realizability
-     * a set of agent winning states
-     * a transducer representing a winning strategy or nullptr if the game is unrealizable.
+     * a set of agent Joker winning states
+     * a transducer representing a Joker strategy or nullptr if the game is unrealizable.
      */
   virtual SynthesisResult run() const final;
 };

@@ -1,10 +1,10 @@
 /*
-* class LTLfFONDCoOperativeSynthesizer
-* implements LTLf Joker synthesis in FOND domains
+* class LTLfFONDBestEffortSynthesizer
+* implements LTLf Best-effort synthesis in FOND domains
 */
 
-#ifndef LTLFFOND_CO_OP_SYNTHESIZER_H
-#define LTLFFOND_CO_OP_SYNTHESIZER_H
+#ifndef LTLFFOND_BE_SYNTHESIZER_H
+#define LTLFFOND_BE_SYNTHESIZER_H
 
 #include<string>
 #include<fstream>
@@ -25,7 +25,7 @@
 
 namespace Syft {
 
-    class LTLfFONDCoOperativeSynthesizer {
+    class LTLfFONDBestEffortSynthesizer {
         protected:
             // data members
             std::shared_ptr<VarMgr> var_mgr_;
@@ -39,7 +39,7 @@ namespace Syft {
             std::string parse_goal(const Domain& domain, std::string& ltlf_goal) const;
 
         public:
-            LTLfFONDCoOperativeSynthesizer(
+            LTLfFONDBestEffortSynthesizer(
                 std::shared_ptr<VarMgr> var_mgr,
                 const std::string& domain_file,
                 const std::string& problem_file,
@@ -53,8 +53,7 @@ namespace Syft {
             }
 
             void interactive(const Domain& domain, const SymbolicStateDfa& product, const std::pair<SynthesisResult, SynthesisResult>& joker_result) const;
-                //const MaxSet& max_set
     };
 
 } 
-#endif // LTLFFOND_CO_OP_SYNTHESIZER_H
+#endif // LTLFFOND_BE_SYNTHESIZER_H

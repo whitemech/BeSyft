@@ -27,7 +27,7 @@ SynthesisResult ReachabilitySynthesizer::run() const {
     if (includes_initial_state(new_winning_states)) {
         result.realizability = true;
         result.winning_states = new_winning_states;
-        result.winning_moves = new_winning_moves; //ELISA CHANGED
+        result.winning_moves = new_winning_moves;
         std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
               new_winning_moves);
 
@@ -41,8 +41,7 @@ SynthesisResult ReachabilitySynthesizer::run() const {
     } else if (new_winning_states == winning_states) {
         result.realizability = false;
         result.winning_states = new_winning_states;
-        result.winning_moves = new_winning_moves; //ELISA CHANGED
-        // result.transducer = nullptr;
+        result.winning_moves = new_winning_moves; 
         std::unordered_map<int, CUDD::BDD> strategy = synthesize_strategy(
               new_winning_moves);
 

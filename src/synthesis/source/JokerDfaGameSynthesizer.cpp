@@ -119,7 +119,6 @@ std::vector<CUDD::BDD> parameterized_output_function;
 
       output_function[output_index] = parameterized_output_function[i];
 
-      // TODO(Lucas): Replace inner loop with CUDD::BDD::VectorCompose
       for (int j = output_count - 1; j >= i; --j) {
           int parameter_index = index_copy[j];
 
