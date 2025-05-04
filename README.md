@@ -32,7 +32,7 @@ Options:
 
 ```
 
-LTLf formulas in agent and environment files should be written in Lydia's syntax. For further details, refer to https://github.com/whitemech/lydia . 
+LTLf formulas in goal files should be written in Lydia's syntax. For further details, refer to https://github.com/whitemech/lydia . 
 
 To perform mbe-synthesis for an LTLf goal in some FOND planning domain, you have to provide the path to the domain specification, problem specification, and the agent goal e.g., `Examples/domain-triangle.pddl`, `Examples/test.pddl`, and `Examples/test.ltlf`.
 
