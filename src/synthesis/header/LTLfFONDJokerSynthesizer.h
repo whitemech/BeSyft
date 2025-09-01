@@ -52,6 +52,7 @@ namespace Syft {
                 return running_times_;
             }
 
+
             void interactive(const Domain& domain, const SymbolicStateDfa& product, const SynthesisResult& joker_result) const;
     };
 

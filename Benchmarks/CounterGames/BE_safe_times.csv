@@ -1,0 +1,10 @@
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_1.ltlf,CounterGames/env_safety.ltlf,Agent,0.02,0.002,0,0,0.022,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_2.ltlf,CounterGames/env_safety.ltlf,Agent,0.025,0.001,0,0,0.026,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_3.ltlf,CounterGames/env_safety.ltlf,Agent,0.05,0.002,0,0.001,0.053,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_4.ltlf,CounterGames/env_safety.ltlf,Agent,0.079,0.006,0.001,0.004,0.09,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_5.ltlf,CounterGames/env_safety.ltlf,Agent,0.133,0.015,0.002,0.013,0.163,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_6.ltlf,CounterGames/env_safety.ltlf,Agent,0.352,0.062,0.004,0.058,0.476,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_7.ltlf,CounterGames/env_safety.ltlf,Agent,2.38,0.098,0.008,0.172,2.658,Coop
+Symbolic-Compositional Best-Effort Synthesizer,CounterGames/goal_8.ltlf,CounterGames/env_safety.ltlf,Agent,6.355,0.275,0.022,0.787,7.439,Coop
+CounterGames/goal_9.ltlf,CounterGames/env_safety.ltlf,MEM,MEM,MEM,MEM
+CounterGames/goal_10.ltlf,CounterGames/env_safety.ltlf,MEM,MEM,MEM,MEM

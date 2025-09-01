@@ -96,9 +96,9 @@ namespace Syft
         std::cout << "[BeSyft] Symbolic DFA construction DONE in " << t_dfa2sym << " s" << std::endl;
     }
 
-    std::pair<SynthesisResult, SynthesisResult> SymbolicCompositionalBestEffortSynthesizer::run() {
+    BestEffortSynthesisResult SymbolicCompositionalBestEffortSynthesizer::run() {
 
-        std::pair<SynthesisResult, SynthesisResult> best_effort_result;
+        BestEffortSynthesisResult best_effort_result;
 
         CUDD::BDD adv_goal = ((!symbolic_dfas_[1].final_states()) + symbolic_dfas_[0].final_states()) * (!arena_[0].initial_state_bdd()); // f_{E} -> f_{Phi}
         // CUDD::BDD adv_goal = (!(symbolic_dfas_[1].final_states() * (!symbolic_dfas_[0].final_states()))) * (!arena_[0].initial_state_bdd());
@@ -114,7 +114,7 @@ namespace Syft
                                                 Player::Agent,
                                                 adv_goal, // Lifting
                                                 var_mgr_->cudd_mgr()->bddOne());
-        best_effort_result.first = adv_synthesizer.run();
+        best_effort_result.adversarial = adv_synthesizer.run();
         double t_advGame = advGame.stop().count() / 1000.0;
         running_times_.push_back(t_advGame);
         std::cout << "DONE in " << t_advGame << " s" << std::endl;
@@ -141,7 +141,7 @@ namespace Syft
                                                             Player::Agent,
                                                             coop_goal, // Lifting
                                                             var_mgr_->cudd_mgr()->bddOne()); 
-        best_effort_result.second = coop_synthesizer.run();
+        best_effort_result.cooperative = coop_synthesizer.run();
         double t_coopGame = coopGame.stop().count() / 1000.0;
         running_times_.push_back(t_coopGame);
         std::cout << "DONE in " << t_coopGame << " s" << std::endl; 
@@ -183,5 +183,194 @@ namespace Syft
 
     std::vector<double> SymbolicCompositionalBestEffortSynthesizer::get_running_times() const {
         return running_times_;
+    }
+
+
+
+    void SymbolicCompositionalBestEffortSynthesizer::interactive(
+        const BestEffortSynthesisResult& best_effort_result
+    ) const {
+        std::cout << "[BeSyft][interactive] Interactive strategy execution" << std::endl;
+
+        // var_mgr_->print_varmgr();
+
+        // initial state. Order of variables is: X \/ Y, Z_{phi}, Z_{E}, Z_{tau}
+        std::vector<int> vars_init(var_mgr_->get_index_to_name().size(), 0);
+        std::vector<int> goal_init = symbolic_dfas_[0].initial_state();
+        std::vector<int> env_init = symbolic_dfas_[1].initial_state();
+        std::vector<int> tau_init = symbolic_dfas_[2].initial_state();
+
+        std::vector<int> state;
+        state.insert(state.end(), vars_init.begin(), vars_init.end());
+        state.insert(state.end(), goal_init.begin(), goal_init.end());
+        state.insert(state.end(), env_init.begin(), env_init.end());
+        state.insert(state.end(), tau_init.begin(), tau_init.end());
+
+        CUDD::BDD winning_region = best_effort_result.adversarial.winning_states;
+        CUDD::BDD cooperative_region = best_effort_result.cooperative.winning_states;
+        std::unordered_map<int, CUDD::BDD> output_function;
+        std::unordered_map<int, CUDD::BDD> alternative_output_function;
+
+        std::unordered_map<int, std::string> id_to_var = var_mgr_->get_index_to_name(); 
+
+        bool running = true;
+        while (running) {
+
+            std::cout << "[BeSyft][interactive] Current state: ";
+            for (const auto&b : state) std::cout << b;
+            // std::cout << " Size. " << state.size() << std::endl;
+            std::cout << std::endl;
+        
+            // gets output function and alternative output function if a state is a witness
+            bool state_is_witness = false;
+            if (winning_region.Eval(state.data()).IsOne()) {
+                std::cout << "[BeSyft][interactive] Agent in winning region uses winning strategy" << std::endl;
+                output_function = best_effort_result.adversarial.transducer.get()->get_output_function();
+            } else if (cooperative_region.Eval(state.data()).IsOne()) {
+                std::cout << "[BeSyft][interactive] Agent in cooperative region uses cooperative strategy" << std::endl;
+                output_function = best_effort_result.cooperative.transducer.get()->get_output_function();
+                // if (dominance_check_ & !best_effort_result.dominant) {
+                //     if (witness_region.Eval(state.data()).IsOne()) {
+                //         state_is_witness = true;
+                //         std::cout << "[BeSyft][interactive] State witnesses that no dominant strategy exists" << std::endl;
+                //         alternative_output_function = best_effort_result.dominance.witness_transducer.get()->get_output_function();
+                //         // std::cout << "alternative output function selected..." << std::endl;
+                //     }                                                        
+                // }
+            } else {
+                std::cout << "[BeSyft][interactive] Agent in losing region. Termination" << std::endl;
+                return;
+            }
+
+            std::vector<int> transition = state;
+        
+            if (starting_player_ == Player::Agent) {
+
+                // agent turn. Agent moves first
+                std::cout << "[BeSyft][interactive] Agent move: " << std::endl;
+                for (int i = 0; i < id_to_var.size(); ++i) {
+                    std::string var = id_to_var[i];
+                    int agent_eval;
+                    if (var_mgr_->is_output_variable(var)) {
+                        std::cout << "Variable: " << var;
+                        std::cout << ". Agent output (0 = false, 1 = true): ";
+                        agent_eval = output_function[i].Eval(state.data()).IsOne();
+                        std::cout << agent_eval << std::endl;
+                        transition[i] = agent_eval;
+                    }
+                }
+
+                // shows witness if current state has one
+                if (state_is_witness) {
+                    std::cout << "[BeSyft][interactive] Alternative agent move (witness no dominant strategy exist): " << std::endl;
+                    for (int i = 0; i < id_to_var.size(); ++i) {
+                        std::string var = id_to_var[i];
+                        int agent_eval;
+                        if (var_mgr_->is_output_variable(var)) {
+                            std::cout << "Variable: " << var;
+                            std::cout << ". Agent output (0 = false, 1 = true): ";
+                            agent_eval = alternative_output_function[i].Eval(state.data()).IsOne();
+                            std::cout << agent_eval << std::endl;
+                            // transition[i] = agent_eval; // do not update transitions
+                        }
+                    }
+                } 
+
+                // environment turn
+                std::cout << "[BeSyft][interactive] Environment move (type 1 if var is true, else 0): " << std::endl;
+                for (int i = 0; i < id_to_var.size(); ++i) {
+                    std::string var = id_to_var[i];
+                    int env_eval;
+                    if (var_mgr_->is_input_variable(var)) {
+                        std::cout << "Variable: " << var;
+                        std::cout << ". Env Input (0=false, 1=true): ";
+                        std::cin >> env_eval;
+                        transition[i] = env_eval;
+                    } 
+                }
+
+            } else if (starting_player_ == Player::Environment) {
+
+                // environment turn. Environment moves first
+                std::cout << "[BeSyft][interactive] Environment move (type 1 if var is true, else 0): " << std::endl;
+                for (int i = 0; i < id_to_var.size(); ++i) {
+                    std::string var = id_to_var[i];
+                    int env_eval;
+                    if (var_mgr_->is_input_variable(var)) {
+                        std::cout << "Variable: " << var;
+                        std::cout << ". Env Input (0=false, 1=true): ";
+                        std::cin >> env_eval;
+                        state[i] = env_eval; // if environment moves first, state must be updated
+                        transition[i] = env_eval;
+                    } 
+                }
+
+                // agent turn
+                std::cout << "[BeSyft][interactive] Agent move: " << std::endl;
+                for (int i = 0; i < id_to_var.size(); ++i) {
+                    std::string var = id_to_var[i];
+                    int agent_eval;
+                    if (var_mgr_->is_output_variable(var)) {
+                        std::cout << "Variable: " << var;
+                        std::cout << ". Agent output (0 = false, 1 = true): ";
+                        agent_eval = output_function[i].Eval(state.data()).IsOne();
+                        std::cout << agent_eval << std::endl;
+                        transition[i] = agent_eval;
+                    }
+                }
+
+                // shows witness if current state has one
+                if (state_is_witness) {
+                    std::cout << "[BeSyft][interactive] Alternative agent move (witness no dominant strategy exist): " << std::endl;
+                    for (int i = 0; i < id_to_var.size(); ++i) {
+                        std::string var = id_to_var[i];
+                        int agent_eval;
+                        if (var_mgr_->is_output_variable(var)) {
+                            std::cout << "Variable: " << var;
+                            std::cout << ". Agent output (0 = false, 1 = true): ";
+                            agent_eval = alternative_output_function[i].Eval(state.data()).IsOne();
+                            std::cout << agent_eval << std::endl;
+                            // transition[i] = agent_eval; // do not update transitions
+                        }
+                    } 
+                }
+            }
+
+            std::cout << "[BeSyft][interactive] Input to transitions: ";
+            for (const auto&b : transition) std::cout << b;
+            // std::cout << " Size. "<< transition.size() << std::endl;
+            std::cout << std::endl;
+            // successor state
+            int curr_state_var = id_to_var.size();
+            std::vector<int> new_state = state;
+            for (int i = 0; i < symbolic_dfas_[0].transition_function().size(); ++i) {
+                new_state[curr_state_var] = symbolic_dfas_[0].transition_function()[i].Eval(transition.data()).IsOne();
+                ++curr_state_var;
+            }
+            for (int i = 0; i < symbolic_dfas_[1].transition_function().size(); ++i) {
+                new_state[curr_state_var] = symbolic_dfas_[1].transition_function()[i].Eval(transition.data()).IsOne();
+                ++curr_state_var;
+            }
+            for (int i = 0; i < symbolic_dfas_[2].transition_function().size(); ++i) {
+                new_state[curr_state_var] = symbolic_dfas_[2].transition_function()[i].Eval(transition.data()).IsOne();
+                ++curr_state_var;
+            }
+            std::cout << "[BeSyft][interactive] Successor state: ";
+            for (const auto& b: new_state) std::cout << b;
+            std::cout << std::endl;
+
+            // update state
+            state = new_state;
+
+            // evaluate whether we can stop the loop
+            if (symbolic_dfas_[0].final_states().Eval(state.data()).IsOne()) {
+                std::cout << "[BeSyft][interactive] The goal has been reached. Termination" << std::endl;
+                running = false;
+            }
+            if (!(symbolic_dfas_[1].final_states().Eval(state.data()).IsOne())) {
+                std::cout << "[BeSyft][interactive] The environment has been negated. Termination" << std::endl;
+                running = false; 
+            }
+        }
     }
 }

@@ -1,23 +1,23 @@
 /*
-* This header declares the class SymbolicCompositionalBestEffortSynthesizer
+* This header declares the class SymbolicCompositionalMBESynthesizer
 * which implements the symbolic-compositional approach to best-effort synthesis
 */
 
-#ifndef SYFT_SYMBOLICCOMPOSITIONALBESTEFFORTSYNTHESIZER_H
-#define SYFT_SYMBOLICCOMPOSITIONALBESTEFFORTSYNTHESIZER_H
+#ifndef SYFT_SYMBOLICCOMPOSITIONALMBESYNTHESIZER_H
+#define SYFT_SYMBOLICCOMPOSITIONALMBESYNTHESIZER_H
 
 #include"ExplicitStateDfaMona.h"
 #include"ExplicitStateDfa.h"
 #include"SymbolicStateDfa.h"
 #include"ReachabilitySynthesizer.h"
-#include"CoOperativeReachabilitySynthesizer.h"
+#include"MBEReachabilitySynthesizer.h"
 #include"InputOutputPartition.h"
 #include"Stopwatch.h"
 #include"spotparser.h"
 
 namespace Syft {
 
-	class SymbolicCompositionalBestEffortSynthesizer {
+	class SymbolicCompositionalMBESynthesizer {
 	
 		protected:
 			std::shared_ptr<Syft::VarMgr> var_mgr_;
@@ -45,7 +45,7 @@ namespace Syft {
 			* \param starting_player Player who moves first each turn
 			* 
 			*/
-			SymbolicCompositionalBestEffortSynthesizer(std::shared_ptr<VarMgr> var_mgr,
+			SymbolicCompositionalMBESynthesizer(std::shared_ptr<VarMgr> var_mgr,
 									std::string agent_specification,
 									std::string environment_specification,
 									InputOutputPartition partition,
@@ -56,7 +56,7 @@ namespace Syft {
 			 * 
 			 * @return std::pair<SynthesisResult, SynthesisResult>. First and second are the adversarial and cooperatively winning strategies, respectively.
 			 */
-			virtual BestEffortSynthesisResult run() final;
+			virtual MinimalBestEffortSynthesisResult run() final;
 
 			/**
 			* \brief Merges two transducers into a best-effort strategy
@@ -77,7 +77,7 @@ namespace Syft {
 			 */
 			std::vector<double> get_running_times() const;
 
-			void interactive(const BestEffortSynthesisResult& best_effort_result) const;
-		};
+			void interactive(MinimalBestEffortSynthesisResult& MBE_result) const;
+	};
 }
 #endif

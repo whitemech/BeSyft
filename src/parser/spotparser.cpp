@@ -124,6 +124,12 @@ formula push_not_in(formula &f)
       // !(X a) = X[!] !a
       lft = f[0];
       r = push_not_in(lft);
+      res = formula::unop(op::strong_X, r);
+      break;
+    case op::strong_X:
+      // !(X[!] a) = X !a
+      lft = f[0];
+      r = push_not_in(lft);
       res = formula::unop(op::X, r);
       break;
     case op::G:

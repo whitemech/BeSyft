@@ -8,6 +8,7 @@
 #include"ExplicitStateDfaMona.h"
 #include"SymbolicCompositionalBestEffortSynthesizer.h"
 #include"SymbolicCompositionalJokerSynthesizer.h"
+#include"SymbolicCompositionalMBESynthesizer.h"
 #include"MonolithicBestEffortSynthesizer.h"
 #include"ExplicitCompositionalBestEffortSynthesizer.h"
 #include"AdversarialSynthesizer.h"
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
 
     string agent_file, environment_file, partition_filename, outfile="";
     int starting_flag, alg_id;
+    bool inter = false;
 
     bool print_dot = false;
     app.add_flag("-d,--print-dot", print_dot, "Print the output function(s)");
@@ -57,10 +59,13 @@ int main(int argc, char** argv) {
             required();
     
     CLI::Option* alg_id_opt =
-        app.add_option("-t,--algorithm", alg_id, "Specifies algorithm to use:\nMonolithic Best-Effort Synthesis=1;\nExplicit-Compositional Best-Effort Synthesis=2;\nSymbolic-Compositional Best-Effort Synthesis=3;\nAdversarial Reactive Synthesis=4") -> required();
+        app.add_option("-t,--algorithm", alg_id, "Specifies algorithm to use:\nMonolithic Best-Effort Synthesis=1;\nExplicit-Compositional Best-Effort Synthesis=2;\nSymbolic-Compositional Best-Effort Synthesis=3;\nAdversarial Reactive Synthesis=4;\nSymbolic-Compositional Joker Synthesis (NO ENV)=5\nSymbolic-Compositional MBE Synthesis=6") -> required();
 
     CLI::Option* outfile_opt =
         app.add_option("-f,--save-results", outfile, "If specified, save results in the passed file. Stores:\nAlgorithm;\nGoal file;\nEnvironment file;\nStarting player;\nLTLf2DFA (s);\nDFA2Sym (s);\nAdv Game (s);\nCoop Game (s); \t#best-effort synthesis algorithms only\nRun time(s);\nRealizability");
+
+    CLI::Option* interactive_opt =
+        app.add_option("-i, --interactive", inter, "If specified, starts the interactive execution of the strategy.\n");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -86,7 +91,7 @@ int main(int argc, char** argv) {
 
     std::shared_ptr<Syft::VarMgr> v_mgr = std::make_shared<Syft::VarMgr>();
 
-    cout << "[BeSyft] Ready to start Joker synthesis" << endl;
+    cout << "[BeSyft] Ready to start synthesis" << endl;
 
     if (alg_id == 1) {
         Syft::MonolithicBestEffortSynthesizer best_effort_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
@@ -158,58 +163,41 @@ int main(int argc, char** argv) {
             }    
         } 
     else if (alg_id == 3) {
-        // Syft::SymbolicCompositionalBestEffortSynthesizer best_effort_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
-        // auto result = best_effort_synthesizer.run();
-        // auto run_times = best_effort_synthesizer.get_running_times();
-        // std::cout << "[BeSyft] Running time: " << sumVec(run_times) << " s" << std::endl;
-        // if (result.first.realizability) {
-        //     std::cout << "[BeSyft] Adversarially realizable. Computed winning strategy" << std::endl;
-        //     if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.first.transducer.get() -> dump_dot("adv_outfunct.dot");}
-        //     if (outfile != "") {
-        //             std::ofstream outstream(outfile, std::ifstream::app);
-        //             outstream << "Symbolic-Compositional Best-Effort Synthesizer," << agent_file << "," << environment_file << ",";
-        //             if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
-        //             outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Adv" << std::endl;
-        //         }
-        // } else if (result.second.realizability) {
-        //     std::cout << "[BeSyft] Cooperatively realizable. Computed best-effort strategy" << std::endl;
-        //     if (print_dot) {std::cout << "[BeSyft] Printing output functions" << std::endl; result.first.transducer.get() -> dump_dot("adv_outfunct.dot"); result.second.transducer.get() -> dump_dot("coop_outfunct");}
-        //     if (outfile != "") {
-        //             std::ofstream outstream(outfile, std::ifstream::app);
-        //             outstream << "Symbolic-Compositional Best-Effort Synthesizer," << agent_file << "," << environment_file << ",";
-        //             if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
-        //             outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Coop" << std::endl;
-        //         }
-        //     }
-        // else if (!result.first.realizability && !result.second.realizability) { 
-        //     std::cout << "[BeSyft] Unrealizable." << std::endl;
-        //     if (outfile != "") {
-        //             std::ofstream outstream(outfile, std::ifstream::app);
-        //             outstream << "Symbolic-Compositional Best-Effort Synthesizer," << agent_file << "," << environment_file << ",";
-        //             if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
-        //             outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Unr" << std::endl;
-        //         }
-        // }
-        Syft::SymbolicCompositionalJokerSynthesizer joker_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
-        auto result = joker_synthesizer.run();
-        auto run_times = joker_synthesizer.get_running_times();
-        v_mgr->print_mgr();
+        Syft::SymbolicCompositionalBestEffortSynthesizer best_effort_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
+        auto result = best_effort_synthesizer.run();
+        auto run_times = best_effort_synthesizer.get_running_times();
         std::cout << "[BeSyft] Running time: " << sumVec(run_times) << " s" << std::endl;
-        if (result.realizability) {
-            std::cout << "[BeSyft] Joker realizable. Computed winning strategy" << std::endl;
-            std::cout << "Joker moves counter: " << result.cost << std::endl;
-            if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.transducer.get() -> dump_dot("adv_outfunct.dot");}
+        if (result.adversarial.realizability) {
+            std::cout << "[BeSyft] Adversarially realizable. Computed winning strategy" << std::endl;
+            if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.adversarial.transducer.get() -> dump_dot("adv_outfunct.dot");}
             if (outfile != "") {
                     std::ofstream outstream(outfile, std::ifstream::app);
-                    outstream << "Symbolic-Compositional Joker Synthesizer," << agent_file << "," << environment_file << ",";
+                    outstream << "Symbolic-Compositional Best-Effort Synthesizer," << agent_file << "," << environment_file << ",";
                     if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
                     outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Adv" << std::endl;
                 }
-            joker_synthesizer.interactive(result);
+        } else if (result.cooperative.realizability) {
+            std::cout << "[BeSyft] Cooperatively realizable. Computed best-effort strategy" << std::endl;
+            if (print_dot) {std::cout << "[BeSyft] Printing output functions" << std::endl; result.adversarial.transducer.get() -> dump_dot("adv_outfunct.dot"); result.cooperative.transducer.get() -> dump_dot("coop_outfunct");}
+            if (outfile != "") {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << "Symbolic-Compositional Best-Effort Synthesizer," << agent_file << "," << environment_file << ",";
+                    if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Coop" << std::endl;
+                }
+            }
+        else if (!result.adversarial.realizability && !result.cooperative.realizability) { 
+            std::cout << "[BeSyft] Unrealizable." << std::endl;
+            if (outfile != "") {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << "Symbolic-Compositional Best-Effort Synthesizer," << agent_file << "," << environment_file << ",";
+                    if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Unr" << std::endl;
+                }
         }
-        else {
-            std::cout << "[BeSyft] Not Joker realizable." << std::endl;
-        }
+        if (inter)
+            best_effort_synthesizer.interactive(result);
+        
 
     }
     else if (alg_id == 4) {
@@ -236,6 +224,76 @@ int main(int argc, char** argv) {
             }
         }        
     } 
+    else if (alg_id == 5){
+        Syft::SymbolicCompositionalJokerSynthesizer joker_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
+        auto result = joker_synthesizer.run();
+        auto run_times = joker_synthesizer.get_running_times();
+        v_mgr->print_mgr();
+        std::cout << "[BeSyft] Running time: " << sumVec(run_times) << " s" << std::endl;
+        if (result.realizability) {
+            std::cout << "[BeSyft] Joker realizable. Computed winning strategy" << std::endl;
+            std::cout << "Joker moves counter: " << result.cost << std::endl;
+            if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.transducer.get() -> dump_dot("adv_outfunct.dot");}
+            if (outfile != "") {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << "Symbolic-Compositional Joker Synthesizer," << agent_file << "," << environment_file << ",";
+                    if (starting_flag) outstream << "Agent,"; else outstream << "Environment,";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",Adv" << std::endl;
+                }
+            joker_synthesizer.interactive(result);
+        }
+        else {
+            std::cout << "[BeSyft] Not Joker realizable." << std::endl;
+        }
+    }
+    else if (alg_id == 6){
+        Syft::SymbolicCompositionalMBESynthesizer MBE_synthesizer(v_mgr, agent_specification, environment_assumption, partition, starting_player);
+        Syft::MinimalBestEffortSynthesisResult result = MBE_synthesizer.run();
+        auto run_times = MBE_synthesizer.get_running_times();
+        v_mgr->print_mgr();
+        std::cout << "[BeSyft] Running time: " << sumVec(run_times) << " s" << std::endl;
+        if (result.adversarial.realizability){
+            std::cout << "[BeSyft] Adversarially realizable. Computed winning strategy" << std::endl;
+            std::cout << "Joker moves counter: " << result.adversarial.cost << std::endl;
+            //if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.transducer.get() -> dump_dot("adv_outfunct.dot");}
+            if (outfile != "") {
+                if (!(std::filesystem::exists(outfile))) {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << "Agent, Environment, LTLf2DFA (s), DFA2Sym (s), Adversarial Synthesis (s), MBE Synthesis (s), Runtime (s), Game solver"<<std::endl;
+                    outstream << agent_file << "," << environment_file << ",";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << ",NA," << sumVec(run_times) << ",Adv" << std::endl;
+                } 
+                else {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << agent_file << "," << environment_file << ",";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << ",NA," << sumVec(run_times) << ",Adv" << std::endl;
+                }
+                
+            }
+        }
+        else if (result.MBE.realizability) {
+            std::cout << "[BeSyft] MBE realizable. Computed MBE winning strategy" << std::endl;
+            std::cout << "Joker moves counter: " << result.MBE.cost << std::endl;
+            if (print_dot) {std::cout << "[BeSyft] Printing output function" << std::endl; result.MBE.transducer.get() -> dump_dot("adv_outfunct.dot");}
+            if (outfile != "") {
+                if (!(std::filesystem::exists(outfile))) {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << "Agent, Environment, LTLf2DFA (s), DFA2Sym (s), Adversarial Synthesis (s), MBE Synthesis (s), Runtime (s), Game solver"<<std::endl;
+                    outstream << agent_file << "," << environment_file << ",";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",MBE" << std::endl;
+                } else {
+                    std::ofstream outstream(outfile, std::ifstream::app);
+                    outstream << agent_file << "," << environment_file << ",";
+                    outstream << run_times[0] << "," << run_times[1] << "," << run_times[2] << "," << run_times[3] << "," << sumVec(run_times) << ",MBE" << std::endl;
+                }
+            }
+            if (inter)
+                MBE_synthesizer.interactive(result);
+        }
+        else {
+            std::cout << "[BeSyft] Not MBE realizable." << std::endl;
+        }
+    }
     else {
         std::cerr << "[BeSyft] Non-existing algorithm. Terminating" << std::endl;
         return 1;

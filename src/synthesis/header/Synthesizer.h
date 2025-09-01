@@ -15,6 +15,16 @@ namespace Syft {
         int cost;
     };
 
+    struct BestEffortSynthesisResult{ //ELISA ENV
+      SynthesisResult adversarial;
+      SynthesisResult cooperative;
+    };
+
+    struct MinimalBestEffortSynthesisResult{ //ELISA ENV
+      SynthesisResult adversarial;
+      SynthesisResult MBE;
+    };
+
 /**
  * \brief Abstract class for synthesizers.
  *

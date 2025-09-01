@@ -1,0 +1,11 @@
+Agent, Environment, LTLf2DFA (s), DFA2Sym (s), Adversarial Synthesis (s), MBE Synthesis (s), Runtime (s), Game solver
+CounterGames/goal_1.ltlf,CounterGames/env_safety.ltlf,0.013,0.001,0,0,0.014,MBE
+CounterGames/goal_2.ltlf,CounterGames/env_safety.ltlf,0.026,0.001,0,0,0.027,MBE
+CounterGames/goal_3.ltlf,CounterGames/env_safety.ltlf,0.047,0.002,0,0.001,0.05,MBE
+CounterGames/goal_4.ltlf,CounterGames/env_safety.ltlf,0.067,0.006,0.001,0.004,0.078,MBE
+CounterGames/goal_5.ltlf,CounterGames/env_safety.ltlf,0.121,0.016,0.002,0.018,0.157,MBE
+CounterGames/goal_6.ltlf,CounterGames/env_safety.ltlf,0.299,0.04,0.004,0.076,0.419,MBE
+CounterGames/goal_7.ltlf,CounterGames/env_safety.ltlf,2.751,0.146,0.01,0.39,3.297,MBE
+CounterGames/goal_8.ltlf,CounterGames/env_safety.ltlf,6.857,0.343,0.027,1.179,8.406,MBE
+CounterGames/goal_9.ltlf,CounterGames/env_safety.ltlf,MEM,MEM,MEM,MEM
+CounterGames/goal_10.ltlf,CounterGames/env_safety.ltlf,MEM,MEM,MEM,MEM

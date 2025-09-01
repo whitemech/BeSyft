@@ -65,14 +65,25 @@ int main(int argc, char** argv) {
         auto running_times = synthesizer.get_running_times();
         auto run_time = sumVec(running_times);
     
+        // if (out_file != "") {
+            //     if (!(std::filesystem::exists(out_file))) {
+            //         std::ofstream outstream(out_file);
+            //         outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
+            //         outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            //     } else {
+            //         std::ofstream outstream(out_file, std::ofstream::app);
+            //         outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            //     }
+            // }
+
         if (out_file != "") {
             if (!(std::filesystem::exists(out_file))) {
                 std::ofstream outstream(out_file);
-                outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
-                outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+                outstream << "PDDL domain,PDDL problem,LTLf goal,Cooperative moves counter"<<std::endl;
+                outstream << domain_file << "," << problem_file << "," << goal_file << "," << result.second.cost << std::endl;
             } else {
                 std::ofstream outstream(out_file, std::ofstream::app);
-                outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+                outstream << domain_file << "," << problem_file << "," << goal_file << "," << result.second.cost << std::endl;
             }
         }
         
@@ -91,14 +102,25 @@ int main(int argc, char** argv) {
         auto run_time = sumVec(running_times);
     
         if (result.realizability) {
+            // if (out_file != "") {
+            //     if (!(std::filesystem::exists(out_file))) {
+            //         std::ofstream outstream(out_file);
+            //         outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
+            //         outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            //     } else {
+            //         std::ofstream outstream(out_file, std::ofstream::app);
+            //         outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+            //     }
+            // }
+
             if (out_file != "") {
                 if (!(std::filesystem::exists(out_file))) {
                     std::ofstream outstream(out_file);
-                    outstream << "PDDL domain,PDDL problem,LTLf goal,PDDL2DFA (s),LTLf2DFA (s),Synthesis (s),Runtime (s)"<<std::endl;
-                    outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+                    outstream << "PDDL domain,PDDL problem,LTLf goal,Cooperative moves counter"<<std::endl;
+                    outstream << domain_file << "," << problem_file << "," << goal_file << "," << result.cost << std::endl;
                 } else {
                     std::ofstream outstream(out_file, std::ofstream::app);
-                    outstream << domain_file << "," << problem_file << "," << goal_file << "," << running_times[0] << "," << running_times[1] << "," << running_times[2] << "," << sumVec(running_times) << std::endl;
+                    outstream << domain_file << "," << problem_file << "," << goal_file << "," << result.cost << std::endl;
                 }
             }
         

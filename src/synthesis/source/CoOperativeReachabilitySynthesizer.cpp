@@ -17,6 +17,8 @@ SynthesisResult CoOperativeReachabilitySynthesizer::run() const {
   CUDD::BDD winning_states = state_space_ & goal_states_;
   CUDD::BDD winning_moves = winning_states;
 
+  int k = 1;
+
   while (true) {
     CUDD::BDD new_winning_moves = winning_moves |
                                   (state_space_ & (!winning_states) & preimage(winning_states));
@@ -35,6 +37,9 @@ SynthesisResult CoOperativeReachabilitySynthesizer::run() const {
           result.transducer = std::make_unique<Transducer>(
                 var_mgr_, initial_vector_, strategy, spec_.transition_function(),
                 starting_player_, protagonist_player_);
+
+          result.cost = k;
+          
           return result;
 
       } else {
@@ -54,6 +59,8 @@ SynthesisResult CoOperativeReachabilitySynthesizer::run() const {
     
     winning_moves = new_winning_moves;
     winning_states = new_winning_states;
+    if (!includes_initial_state(new_winning_states))
+      k++;
   }
 
 }
