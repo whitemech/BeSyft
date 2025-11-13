@@ -17,15 +17,15 @@ def clean_column(series):
     return cleaned
 plt.rcParams.update({'font.size': 22})
 # Read the three CSV files
-joker_df = pd.read_csv('joker_safe_times.csv', skiprows=1, header=None)
-best_df = pd.read_csv('BE_safe_times.csv', skiprows=0, header=None)
+joker_df = pd.read_csv('joker_times.csv', skiprows=1, header=None)
+best_df = pd.read_csv('BE_times.csv', skiprows=1, header=None) #0
 print(joker_df)
 print(best_df)
 
-for i in range(10): #80
+for i in range(80): #10
     if i == 0:
         joker_times = joker_df.iloc[:10, 6].values
-        best_times = best_df.iloc[:10, 8].values #[,6]
+        best_times = best_df.iloc[:10, 6].values #[,8]
         joker_times = clean_column(joker_times)
         
         best_times = clean_column(best_times)
@@ -50,12 +50,14 @@ for i in range(10): #80
         # Labels and title
         ax.set_xlabel('Instances')
         ax.set_ylabel('Runtime (s)')
-        ax.set_title('Comparison of runtimes: COUNTER-SAFE')
+        #ax.set_title('Comparison of runtimes under ENV(2); n = 1,..,10')
+        ax.set_title('Comparison of runtimes under ENV(1); K = 1,...,10; n = 1')
         ax.set_xticks(x)
         ax.set_xticklabels(samples, rotation=90)
         ax.set_yscale('symlog')
         ax.legend()
-        plt.ylim(top=10)
+        plt.ylim(top=0.03)
+        #plt.ylim(top=10)
         # yticks = plt.yticks()[0]
         # y_max = max(yticks)
         # exponent = math.ceil(math.log10(y_max))
@@ -115,7 +117,7 @@ for i in range(10): #80
         # Labels and title
         ax.set_xlabel('Instances')
         ax.set_ylabel('Runtime (s)')
-        ax.set_title(f'Comparison of runtimes: COUNTER-{j}')
+        ax.set_title(f'Comparison of runtimes under ENV(1); K = 1,...,10; n = {j}')
         ax.set_xticks(x)
         ax.set_xticklabels(samples, rotation=90)
         ax.set_yscale('symlog')
